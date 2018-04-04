@@ -1,5 +1,8 @@
 package site.binghai.store.entity;
 
+import lombok.Data;
+import site.binghai.store.enums.OrderStatusEnum;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -10,13 +13,39 @@ import javax.persistence.Id;
  * 统一订单
  */
 @Entity
-public class UnifiedOrder extends BaseEntity{
+@Data
+public class UnifiedOrder extends BaseEntity {
     @Id
     @GeneratedValue
     private Long id;
+    /**
+     * 支付业务代码 {@link site.binghai.store.enums.PayBizEnum}
+     */
+    private Integer appCode;
+    private String title;
+    private String remark;
+    private String openId;
+    private String userName;
+    private String orderId;
+    /**
+     * 订单状态 {@link OrderStatusEnum}
+     */
+    private Integer status;
+    /**
+     * 订单原价
+     */
+    private Integer originalPrice;
+    /**
+     * 订单应付
+     */
+    private Integer shouldPay;
+    /**
+     * 使用的优惠券id，未使用则为-1
+     */
+    private Long couponId;
 
     @Override
     public Long getId() {
-        return null;
+        return id;
     }
 }
