@@ -27,6 +27,7 @@ public class CouponTicket extends BaseEntity{
     private Integer remaining; // 剩余量
     private Long activityStartTime;
     private Long activityEndTime;
+    private Long regionId;
 
     @Override
     public Long getId() {

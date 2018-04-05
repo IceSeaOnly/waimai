@@ -7,28 +7,26 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 /**
- * Created by IceSea on 2018/4/4.
+ * Created by IceSea on 2018/4/5.
  * GitHub: https://github.com/IceSeaOnly
+ * 记录用户使用过的地址
  */
-@Data
 @Entity
-public class Coupon extends BaseEntity{
+@Data
+public class UserAddress extends BaseEntity {
     @Id
     @GeneratedValue
     private Long id;
-    private Long couponId;
     private Long userId;
-    private Long regionId;
-    private String openId;
+    private String addressHead;
+    private String addressDetail;
     private String userName;
-    private Long outOfDateTs;
-    /**
-     * {@link site.binghai.store.enums.CouponStatusEnum}
-     * */
-    private Integer couponStatus;
+    private String userPhone;
 
     @Override
     public Long getId() {
         return id;
     }
+
+
 }

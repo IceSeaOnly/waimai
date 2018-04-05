@@ -6,6 +6,7 @@ import site.binghai.store.enums.OrderStatusEnum;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.util.UUID;
 
 /**
  * Created by IceSea on 2018/4/4.
@@ -27,6 +28,13 @@ public class UnifiedOrder extends BaseEntity {
     private String openId;
     private String userName;
     private String orderId;
+
+    public UnifiedOrder() {
+        orderId = UUID.randomUUID().toString();
+        status = OrderStatusEnum.CREATED.getCode();
+    }
+
+
     /**
      * 订单状态 {@link OrderStatusEnum}
      */
