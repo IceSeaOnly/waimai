@@ -23,6 +23,6 @@ public class LoginController {
      * */
     @RequestMapping("adminUser")
     public String adminUser(){
-        return "redirect:";
+        return "redirect:/admin#login";
     }
 }
