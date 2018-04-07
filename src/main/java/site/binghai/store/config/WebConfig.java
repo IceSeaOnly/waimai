@@ -3,7 +3,9 @@ package site.binghai.store.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import site.binghai.store.inters.AdminInterceptor;
 import site.binghai.store.inters.UserInterceptor;
 
 /**
@@ -17,8 +19,17 @@ public class WebConfig implements WebMvcConfigurer {
         return new UserInterceptor();
     }
 
+    @Bean
+    public AdminInterceptor adminInter(){ return new AdminInterceptor();}
+
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/adminDashBoard/").setViewName("admin");
+    }
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(userInter()).addPathPatterns("/user/**");
+        registry.addInterceptor(adminInter()).addPathPatterns("/admin/**");
     }
 }

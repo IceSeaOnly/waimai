@@ -19,6 +19,10 @@ import javax.servlet.http.HttpServletRequest;
 public class BaseController {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    protected JSONObject newJSONObject() {
+        return new JSONObject();
+    }
+
     /**
      * 从thread local获取网络上下文
      */
@@ -33,7 +37,8 @@ public class BaseController {
     }
 
     public Admin getAdmin() {
-        return (Admin) getServletRequest().getSession().getAttribute("admin");
+        Object obj = getServletRequest().getSession().getAttribute("admin");
+        return obj == null ? null : (Admin) obj;
     }
 
     public User getUser() {
@@ -42,7 +47,7 @@ public class BaseController {
 
     public JSONObject fail(String err) {
         JSONObject object = new JSONObject();
-        object.put("status", "fail");
+        object.put("status", "FAIL");
         object.put("msg", err);
         return object;
     }
@@ -56,13 +61,13 @@ public class BaseController {
 
     public JSONObject success() {
         JSONObject object = new JSONObject();
-        object.put("status", "ok");
+        object.put("status", "SUCCESS");
         return object;
     }
 
     public JSONObject success(String msg) {
         JSONObject object = new JSONObject();
-        object.put("status", "ok");
+        object.put("status", "SUCCESS");
         object.put("msg", msg);
         return object;
     }
@@ -77,7 +82,7 @@ public class BaseController {
 
     public JSONObject success(Object data, String msg) {
         JSONObject object = new JSONObject();
-        object.put("status", "ok");
+        object.put("status", "SUCCESS");
         object.put("data", data);
         object.put("msg", msg);
         return object;
