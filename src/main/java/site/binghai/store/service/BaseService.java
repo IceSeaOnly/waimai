@@ -1,21 +1,27 @@
 package site.binghai.store.service;
 
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
+import site.binghai.store.entity.Admin;
 import site.binghai.store.entity.BaseEntity;
+import site.binghai.store.entity.TradeItem;
+import site.binghai.store.tools.BaseBean;
 
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.lang.reflect.ParameterizedType;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by IceSea on 2018/4/4.
  * GitHub: https://github.com/IceSeaOnly
  */
-public abstract class BaseService<T extends BaseEntity> {
+public abstract class BaseService<T extends BaseEntity> extends BaseBean {
     @Autowired
     private EntityManager entityManager;
     private SimpleJpaRepository<T, Long> daoHolder;
@@ -95,6 +101,31 @@ public abstract class BaseService<T extends BaseEntity> {
     @Transactional
     public void batchSave(List<T> batch) {
         getDao().saveAll(batch);
+    }
+
+    /**
+     * 使用map更新entity中除id外的其他字段
+     */
+    public T updateParams(T t, Map map) {
+        Long id = t.getId();
+        JSONObject item = JSONObject.parseObject(JSONObject.toJSONString(t));
+        item.putAll(map);
+        item.put("id", id);
+        return item.toJavaObject(getTypeArguement());
+    }
+
+    public T updateAndSave(Admin admin, Map map) throws Exception {
+        Long id = getLong(map, "id");
+        if (id == null) {
+            throw new Exception("id must be present!");
+        }
+        T old = findById(id);
+        if (old == null) {
+            throw new Exception("item not exist!");
+        }
+        T new_ = updateParams(old, map);
+        logger.warn("{} update TradeItemId {} to {}", admin, old, new_);
+        return update(new_);
     }
 }
 

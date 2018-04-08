@@ -27,4 +27,17 @@ public class CategoryService extends BaseService<Category> {
                 .filter(v -> superCate ? v.getFid() == null : v.getFid() != null)
                 .collect(Collectors.toList());
     }
+
+    public List<Category> listAllByFid(Long categoryId) {
+        List<Category> categories = emptyList();
+        List<Category> all = list(false);
+
+        for (Category category : all) {
+            if (category.getFid().equals(categoryId)) {
+                categories.add(category);
+            }
+        }
+
+        return categories;
+    }
 }

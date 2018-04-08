@@ -17,6 +17,7 @@ public class TradeItem extends BaseEntity{
     @GeneratedValue
     private Long id;
     private String name;
+    private Long categoryId;
     private Integer price;
     private String detail;
     private String img;
