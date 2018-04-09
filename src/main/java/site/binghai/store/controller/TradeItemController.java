@@ -11,6 +11,7 @@ import site.binghai.store.service.TradeItemService;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by IceSea on 2018/4/8.
@@ -24,8 +25,11 @@ public class TradeItemController extends BaseController {
     @Autowired
     private TradeItemService tradeItemService;
 
+    /**
+     * type: all(default),online,offline
+     */
     @RequestMapping(value = "list", method = RequestMethod.GET)
-    public Object list(@RequestParam Long categoryId) {
+    public Object list(@RequestParam Long categoryId, String type) {
         Category category = null;
         category = categoryService.findById(categoryId);
         if (category == null) {
@@ -34,34 +38,43 @@ public class TradeItemController extends BaseController {
 
         JSONArray data = newJSONArray();
 
-        if (category.getFid() == null) {
-            data.add(listCategoryList(category));
+        if (category.getFid() != null) {
+            data.addAll(listCategoryList(category, type));
         } else {
             List<Category> categories = categoryService.listAllByFid(categoryId);
             for (Category cat : categories) {
-                data.add(listCategoryList(cat));
+                data.addAll(listCategoryList(cat, type));
             }
         }
 
-        return success(data, "SUCCESS");
+        JSONObject obj = newJSONObject();
+        obj.put("list", data);
+        return success(obj, "SUCCESS");
     }
 
     /**
      * 列出某子类目下的所有商品
      */
-    private List<TradeItem> listCategoryList(Category category) {
-        if (category.getFid() != null) {
+    private List<TradeItem> listCategoryList(Category category, String type) {
+        if (category.getFid() == null) {
             return emptyList();
         }
 
-        return tradeItemService.findByCategoryId(category.getId());
+        List<TradeItem> list = tradeItemService.findByCategoryId(category.getId());
+        if (null == type || "all".equals(type)) return list;
+        if ("offline".equals(type)) {
+            return list.stream().filter(v -> !v.getOnLine()).collect(Collectors.toList());
+        } else {
+            return list.stream().filter(v -> v.getOnLine()).collect(Collectors.toList());
+        }
     }
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
     public Object add(@RequestBody Map map) {
-        JSONObject obj = JSONObject.parseObject(JSONObject.toJSONString(map));
-        TradeItem item = obj.toJavaObject(TradeItem.class);
+        TradeItem item = tradeItemService.newInstance(map);
         item.setId(null);
+        item.setSaleCount(0);
+        item.setOnLine(item.getOnLine() == null ? false : item.getOnLine());
 
         return success(tradeItemService.save(item), "SUCCESS");
     }

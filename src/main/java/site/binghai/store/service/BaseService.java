@@ -26,6 +26,11 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
     private EntityManager entityManager;
     private SimpleJpaRepository<T, Long> daoHolder;
 
+    public T newInstance(Map map) {
+        JSONObject obj = JSONObject.parseObject(JSONObject.toJSONString(map));
+        return obj.toJavaObject(getTypeArguement());
+    }
+
     protected JpaRepository<T, Long> getDao() {
         if (daoHolder != null) {
             return daoHolder;
@@ -66,6 +71,14 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
     }
 
     @Transactional
+    public T deleteIfExist(Long id) {
+        T t = findById(id);
+        if (t == null) return null;
+        delete(id);
+        return t;
+    }
+
+    @Transactional
     public boolean deleteAll(String confirm) {
         if (confirm.equals("confirm")) {
             getDao().deleteAll();
@@ -94,6 +107,10 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
         return getDao().findAll(new PageRequest(0, limit)).getContent();
     }
 
+    public List<T> findAll(int page, int pageSize) {
+        return getDao().findAll(new PageRequest(page, pageSize)).getContent();
+    }
+
     public long count() {
         return getDao().count();
     }
@@ -114,6 +131,7 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
         return item.toJavaObject(getTypeArguement());
     }
 
+    @Transactional
     public T updateAndSave(Admin admin, Map map) throws Exception {
         Long id = getLong(map, "id");
         if (id == null) {
@@ -124,7 +142,7 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
             throw new Exception("item not exist!");
         }
         T new_ = updateParams(old, map);
-        logger.warn("{} update TradeItemId {} to {}", admin, old, new_);
+        logger.warn("{} update {} from {} to {}", admin, getTypeArguement().getSimpleName(), old, new_);
         return update(new_);
     }
 }

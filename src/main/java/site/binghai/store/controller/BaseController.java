@@ -15,7 +15,6 @@ import javax.servlet.http.HttpServletRequest;
  * GitHub: https://github.com/IceSeaOnly
  */
 public class BaseController extends BaseBean {
-
     /**
      * 从thread local获取网络上下文
      */

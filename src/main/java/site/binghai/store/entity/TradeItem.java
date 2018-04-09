@@ -22,4 +22,5 @@ public class TradeItem extends BaseEntity{
     private String detail;
     private String img;
     private Integer saleCount;
+    private Boolean onLine;
 }

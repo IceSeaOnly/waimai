@@ -34,6 +34,9 @@ public class CategoryController extends BaseController {
         }
     }
 
+    /**
+     * 列出所有类目及其商品量
+     */
     @RequestMapping("listCate")
     public Object listCate() {
         List<Category> list = categoryService.list(false);
@@ -54,7 +57,7 @@ public class CategoryController extends BaseController {
         JSONObject data = newJSONObject();
         data.put("lists", lists);
 
-        return success(data,"SUCCESS");
+        return success(data, "SUCCESS");
     }
 
     @RequestMapping(value = "update", method = RequestMethod.POST)
@@ -72,12 +75,7 @@ public class CategoryController extends BaseController {
 
     @RequestMapping("delete")
     public Object delete(@RequestParam Long id) {
-        Category category = categoryService.findById(id);
-        if (category != null) {
-            logger.warn("{} deleted category {}", getAdmin(), category);
-            categoryService.delete(id);
-        }
-
+        categoryService.deleteIfExist(id);
         return success();
     }
 
@@ -112,5 +110,33 @@ public class CategoryController extends BaseController {
         one = categoryService.save(one);
 
         return success(one, "SUCCESS");
+    }
+
+    @RequestMapping("categoryTree")
+    public Object categoryTree() {
+        List<Category> supers = categoryService.list(true);
+        if (CollectionUtils.isEmpty(supers)) {
+            return success();
+        }
+
+        List<JSONObject> ls = emptyList();
+
+        for (Category cate : supers) {
+            JSONObject item = newJSONObject();
+            item.put("label", cate.getName());
+            item.put("value", cate.getId());
+            JSONArray arr = newJSONArray();
+            List<Category> chils = categoryService.listAllByFid(cate.getId());
+            for (Category ct : chils) {
+                JSONObject obj = newJSONObject();
+                obj.put("label", ct.getName());
+                obj.put("value", ct.getId().toString());
+                arr.add(obj);
+            }
+            item.put("children", arr);
+            ls.add(item);
+        }
+
+        return success(ls, "SUCCESS");
     }
 }

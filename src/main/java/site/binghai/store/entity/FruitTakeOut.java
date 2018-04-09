@@ -13,12 +13,13 @@ import javax.persistence.Id;
  */
 @Entity
 @Data
-public class FruitTakeOut extends BaseEntity{
+public class FruitTakeOut extends BaseEntity {
     @Id
     @GeneratedValue
     private Long id;
     private Long unifiedOrderId;
     private Long addressId;
+    private String tradeItemJson;
     private String remark;
 
     @Override
