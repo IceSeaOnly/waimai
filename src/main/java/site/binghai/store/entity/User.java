@@ -17,8 +17,10 @@ public class User extends BaseEntity {
     @GeneratedValue
     private Long id;
     private String userName;
+    private String phone;
     private String openId;
     private Integer integral; // 会员积分
-
+    private Long regionId; // 对应Category一级目录
+    private String regionName;
 
 }

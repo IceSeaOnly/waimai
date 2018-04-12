@@ -12,7 +12,7 @@ import javax.persistence.Id;
  */
 @Entity
 @Data
-public class Admin extends BaseEntity{
+public class Admin extends BaseEntity {
     @Id
     @GeneratedValue
     private Long id;

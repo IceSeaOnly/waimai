@@ -19,12 +19,15 @@ public class UserController extends BaseController {
     @Autowired
     private UserService userService;
 
+    /**
+     * 为了兼容前端，前端传入从1开始，但后端从0开始计数
+     * */
     @RequestMapping("list")
     public Object list(Integer page, Integer pageSize) {
-        if (page == null || page < 0 || page > 100) page = 10;
-        if (pageSize == null || pageSize < 0) pageSize = 1;
+        if (page == null || page <= 0 || page > 100) page = 1;
+        if (pageSize == null || pageSize < 0) pageSize = 10;
 
-        List<User> ls = userService.findAll(page, pageSize);
+        List<User> ls = userService.findAll(page-1, pageSize);
         long total = userService.count();
         JSONObject data = newJSONObject();
         data.put("list", ls);

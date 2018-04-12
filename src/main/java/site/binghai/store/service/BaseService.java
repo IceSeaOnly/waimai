@@ -39,23 +39,22 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
         return daoHolder;
     }
 
+    /**
+     * 获取T的实际类型
+     * */
     protected Class<T> getTypeArguement() {
         Class<T> tClass = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
         return tClass;
     }
-
 
     @Transactional
     public T save(T t) {
         return getDao().save(t);
     }
 
-    /**
-     * 更新不存在的记录会失败
-     */
     @Transactional
     public T update(T t) {
-        if (t.getId() > 0) {
+        if (t.getId() >= 0) {
             return save(t);
         }
         return t;
@@ -85,18 +84,6 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
             return true;
         }
         return false;
-    }
-
-    /**
-     * 覆盖保存
-     */
-    @Transactional
-    public boolean coverSave(T t) {
-        if (getDao().existsById(t.getId())) {
-            getDao().delete(t);
-        }
-        getDao().save(t);
-        return true;
     }
 
     public List<T> findByIds(List<Long> ids) {

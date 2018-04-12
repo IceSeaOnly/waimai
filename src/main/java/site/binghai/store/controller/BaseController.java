@@ -9,6 +9,7 @@ import site.binghai.store.entity.Admin;
 import site.binghai.store.entity.User;
 import site.binghai.store.tools.BaseBean;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  * Created by IceSea on 2018/4/5.
@@ -26,6 +27,10 @@ public class BaseController extends BaseBean {
             return servletRequestAttributes.getRequest();
         }
         return null;
+    }
+
+    public HttpSession getSession(){
+        return getServletRequest().getSession();
     }
 
     public Admin getAdmin() {
