@@ -28,6 +28,7 @@ public class UnifiedOrder extends BaseEntity {
     private String openId;
     private String userName;
     private String orderId;
+    private Long regionId; // 区域id，即一级类目categoryId
 
     public UnifiedOrder() {
         orderId = UUID.randomUUID().toString();

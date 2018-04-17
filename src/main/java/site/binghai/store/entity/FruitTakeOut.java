@@ -1,6 +1,7 @@
 package site.binghai.store.entity;
 
 import lombok.Data;
+import site.binghai.store.enums.TakeOutStatusEnum;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,6 +22,11 @@ public class FruitTakeOut extends BaseEntity {
     private Long addressId;
     private String tradeItemJson;
     private String remark;
+    private String orderId;
+    /**
+     * {@link TakeOutStatusEnum}
+     * */
+    private Integer takeOutStatus;
 
     @Override
     public Long getId() {

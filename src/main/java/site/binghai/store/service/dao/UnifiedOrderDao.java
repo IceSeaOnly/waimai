@@ -12,5 +12,13 @@ import java.util.List;
  */
 public interface UnifiedOrderDao extends JpaRepository<UnifiedOrder, Long> {
     List<UnifiedOrder> findAllByAppCodeOrderByCreatedDesc(Integer code, Pageable pageable);
+
+    List<UnifiedOrder> findAllByAppCodeAndRegionIdOrderByCreatedDesc(Integer code, Long regionId, Pageable pageable);
+
+    List<UnifiedOrder> findAllByAppCodeAndRegionIdAndStatusOrderByCreatedDesc(Integer code, Long regionId, Integer status, Pageable pageable);
+
     Long countByAppCode(Integer code);
+
+    Long countByAppCodeAndRegionId(Integer code, Long regionId);
+    Long countByAppCodeAndRegionIdAndStatus(Integer code, Long regionId,Integer status);
 }

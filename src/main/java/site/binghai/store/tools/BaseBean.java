@@ -29,4 +29,8 @@ public abstract class BaseBean extends MapUtils {
     protected List emptyList() {
         return new ArrayList();
     }
+
+    protected JSONObject toJsonObject(Object obj) {
+        return JSONObject.parseObject(JSONObject.toJSONString(obj));
+    }
 }

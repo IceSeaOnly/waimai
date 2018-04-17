@@ -18,8 +18,7 @@ public enum OrderStatusEnum {
     COMPLETE(4, "已完成"),
     REFUNDING(5, "退款申请中"),
     CANCELED_REFUNDED(6, "已退款/已取消"),
-    CANCELED(7, "已取消"),
-    OUTOFDATE(8, "已超时/已取消"),
+    OUTOFDATE(7, "已超时/已取消"),
 
     ;
 
