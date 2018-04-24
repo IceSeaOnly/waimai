@@ -7,20 +7,14 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 /**
- * Created by IceSea on 2018/4/5.
+ * Created by IceSea on 2018/4/23.
  * GitHub: https://github.com/IceSeaOnly
- * 地址前缀
  */
 @Entity
 @Data
-public class AddressHead extends BaseEntity{
+public class IndexImage extends BaseEntity {
     @Id
     @GeneratedValue
     private Long id;
-    private String name;
-
-    @Override
-    public Long getId() {
-        return id;
-    }
+    private String img;
 }

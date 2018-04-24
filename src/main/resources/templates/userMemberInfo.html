@@ -1,0 +1,89 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0"/>
+    <title>我的信息</title>
+
+    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
+    <script type='text/javascript' src='http://g.alicdn.com/sj/lib/zepto/zepto.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/sm.min.js' charset='utf-8'></script>
+    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/??sm.min.css,sm-extend.min.css">
+    <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/??sm.min.js,sm-extend.min.js'
+            charset='utf-8'></script>
+
+
+</head>
+<body>
+<div class="page-group">
+    <!-- 你的html代码 -->
+    <div class="page">
+        <header class="bar bar-nav">
+            <a class="icon icon-left pull-left" href="/user/member" external></a>
+        </header>
+
+        <div class="content">
+            <form method="post" action="/user/updateMemberInfo" id="forms">
+                <div class="list-block">
+                    <ul>
+                        <!-- Text inputs -->
+                        <li>
+                            <div class="item-content">
+                                <div class="item-media"><i class="icon icon-form-name"></i></div>
+                                <div class="item-inner">
+                                    <div class="item-title label">姓名</div>
+                                    <div class="item-input">
+                                        <input type="text" placeholder="请输入姓名" th:value="${session.user.userName}" name="userName">
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="item-content">
+                                <div class="item-media"><i class="icon icon-form-email"></i></div>
+                                <div class="item-inner">
+                                    <div class="item-title label">手机号</div>
+                                    <div class="item-input">
+                                        <input type="text" placeholder="请输入手机号" th:value="${session.user.phone}" name="phone">
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="item-content">
+                                <div class="item-media"><i class="icon icon-form-gender"></i></div>
+                                <div class="item-inner">
+                                    <div class="item-title label">区域</div>
+                                    <div class="item-input">
+                                        <select name="regionId">
+                                            <option th:each="cat:${regions}" th:text="${cat.name}" th:value="${cat.id}">区域名</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="item-content">
+                                <div class="item-media"><i class="icon icon-form-name"></i></div>
+                                <div class="item-inner">
+                                    <div class="item-title label">详细地址</div>
+                                    <div class="item-input">
+                                        <input type="text" th:value="${address}" placeholder="所选区域下的详细地址" name="address">
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="content-block">
+                    <a class="button button-big button-fill button-success" onclick="$('#forms').submit()">提交</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+<script>
+    $.init();
+</script>
+</body>
+</html>

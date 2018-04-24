@@ -16,6 +16,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by IceSea on 2018/4/4.
@@ -41,7 +42,7 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
 
     /**
      * 获取T的实际类型
-     * */
+     */
     protected Class<T> getTypeArguement() {
         Class<T> tClass = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
         return tClass;
@@ -61,7 +62,8 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
     }
 
     public T findById(Long id) {
-        return getDao().findById(id).orElseGet(null);
+        if(id == null) return null;
+        return getDao().findById(id).orElse(null);
     }
 
     @Transactional

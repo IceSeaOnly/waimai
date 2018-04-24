@@ -1,6 +1,7 @@
 package site.binghai.store.inters;
 
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import site.binghai.store.tools.UrlUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +21,8 @@ public class UserInterceptor extends HandlerInterceptorAdapter {
                 return true;
             }
         }
+        String url = UrlUtil.getFullUrl(request);
+        request.getSession().setAttribute("backUrl",url);
         response.sendRedirect("/login/userLogin");
         return false;
     }

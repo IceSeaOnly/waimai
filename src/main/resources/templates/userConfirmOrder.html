@@ -1,0 +1,79 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,maximum-scale=3,minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui"/>
+    <title>订单详情</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/font.css">
+    <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+</head>
+
+<body ontouchstart="return true;">
+<!--内容区-->
+<article class="main-container">
+
+    <!--订单编号-->
+    <div class="memberDetailheader line" th:text="'序列号：'+${uorder.created}">订单号：201506111025</div>
+
+    <!--收货地址-->
+    <div class="order-Address line select">
+        <dl th:if="${addressMiss}">
+            <a href="/user/memberInfo">
+                <h2 style="color: red">请补充您的信息</h2>
+            </a>
+        </dl>
+        <dl th:if="${!addressMiss}">
+            <dt th:text="${address.userName+ '&nbsp;&nbsp;'+address.userPhone}">郭小帅&nbsp;&nbsp;131****1111</dt>
+            <dd th:text="${address.addressHead+address.addressDetail}">广东省 广州市 天河区 广州中大道</dd>
+        </dl>
+    </div>
+
+    <!--购买商品-->
+    <div class="list-content cartlist order-Pro memberDetaillist">
+        <ul class="line-li">
+            <li th:each="item:${order.getItemJSONObject()}">
+                <div class="pro-img"><img th:src="${item.img}" alt=""></div>
+                <div class="pro-con"><h3 th:text="${item.name}">NAME</h3><b th:text="${item.price}">￥150.00</b>
+                    <p th:text="'&times;'+${item.num}">&times;1</p></div>
+            </li>
+        </ul>
+    </div>
+
+    <!--支付方式-->
+    <div class="list list-select">
+        <ul class="line">
+            <li>支付方式：<font>微信支付</font></li>
+            <a th:href="${'/user/couponList?unifiedId='+uorder.id}">
+                <li>使用优惠：<font th:text="${couponInfo}">无可用优惠</font></li>
+            </a>
+            <li>订单状态：<font th:text="${uorder.orderState().name}">待支付</font></li>
+        </ul>
+    </div>
+
+    <!--价格、下单时间-->
+    <div class="memberDetailPrice line">
+        <p th:text="${'￥'+uorder.originalDoublePrice()+' - ￥'+conponPrice+'(优惠抵扣)'}">￥88.4 - ￥0(优惠抵扣)</p>
+        <p th:text="${'应付：￥'+uorder.shouldPayDouble()}">应付：￥118.4</p>
+        <p th:text="${'下单时间：'+uorder.createdTime}">下单时间：2015-04-28 19:39</p>
+    </div>
+
+    <!--按钮-->
+    <div class="memberDetailFooter line">
+        <a th:href="'/user/goToPay?unifiedId='+${uorder.id}" th:if="${uorder.status<3}">
+            <button>去支付</button>
+        </a>
+        <a th:href="'/user/cancelOrder?unifiedId='+${uorder.id}" th:if="${uorder.status<4}">
+            <button>取消订单</button>
+        </a>
+    </div>
+
+</article>
+
+</body>
+</html>
+<script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="/js/swipe-min.js"></script>
+<script type="text/javascript" src="/js/common.js"></script>

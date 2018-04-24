@@ -16,6 +16,7 @@ public class User extends BaseEntity {
     @Id
     @GeneratedValue
     private Long id;
+    private String avatar;
     private String userName;
     private String phone;
     private String openId;

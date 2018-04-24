@@ -1,9 +1,12 @@
 package site.binghai.store;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.junit.Test;
 import site.binghai.store.entity.TradeItem;
+import site.binghai.store.tools.HttpUtils;
+import site.binghai.store.tools.IoUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,5 +35,44 @@ public class TestBean {
         JSONObject item = JSONObject.parseObject(JSONObject.toJSONString(tradeItem));
         item.putAll(map);
         TradeItem newOne = item.toJavaObject(TradeItem.class);
+    }
+
+    @Test
+    public void drive(){
+        Long start  = 370218040482525L;
+        Long end = 370218040482589L;
+        String[] id = {"370718040884162","370718040884165","370718040884166","370218040482525","370218040482526","370218040482527","370218040482528","370218040482586","370218040482587","370218040482588","370218040482589"};
+        StringBuilder sb = new StringBuilder();
+        for (String s:id) {
+            for (int i = 1; i < 20; i++) {
+                JSONObject rs;
+                try {
+                     rs = HttpUtils.sendJSONGet("http://sd.122.gov.cn/m/examplan/getStudentInfo?page="+i+"&xh="+s,null);
+                }catch (Exception e){
+                    continue;
+                }
+                if(rs.getInteger("code") == 200 && rs.get("data") != null){
+                    JSONArray arr = rs.getJSONObject("data").getJSONArray("content");
+                    for (int j = 0; j < arr.size(); j++) {
+                        JSONObject o = arr.getJSONObject(j);
+                        System.out.println(String.format("%5s %18s %s ~ %s @ %s -> %s",
+                                o.getString("xm"),
+                                o.getString("sfzmhm"),
+                                o.getString("pxsj"),
+                                o.getString("zt").equals("1")?"成功":"失败",
+                                s,
+                                i));
+                    }
+                }
+            }
+
+        }
+
+//        IoUtils.WriteCH("km2.txt",sb.toString());
+    }
+
+    @Test
+    public void name() throws Exception {
+        System.out.println(HttpUtils.sendGet("http://sd.122.gov.cn/m/examplan/getStudentInfo?page=0&xh=370218040482586",null));
     }
 }

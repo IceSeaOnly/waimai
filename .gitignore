@@ -25,3 +25,10 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
+
+km2.txt
+logs.log
+logs.log.2018-04-18.0.gz
+logs.log.2018-04-22.0.gz
+logs.log.2018-04-23.0.gz
+src/main/resources/templates/temp.html

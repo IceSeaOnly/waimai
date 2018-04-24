@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import site.binghai.store.entity.UnifiedOrder;
+import site.binghai.store.entity.User;
 import site.binghai.store.enums.OrderStatusEnum;
 import site.binghai.store.enums.PayBizEnum;
 import site.binghai.store.service.dao.UnifiedOrderDao;
@@ -45,8 +46,8 @@ public class UnifiedOrderService extends BaseService<UnifiedOrder> {
         return dao.countByAppCodeAndRegionId(pb.getCode(), categoryId);
     }
 
-    public Long countByAppCodeAndRegionIdAndStatus(PayBizEnum pb, Long categoryId,Integer status) {
-        return dao.countByAppCodeAndRegionIdAndStatus(pb.getCode(), categoryId,status);
+    public Long countByAppCodeAndRegionIdAndStatus(PayBizEnum pb, Long categoryId, Integer status) {
+        return dao.countByAppCodeAndRegionIdAndStatus(pb.getCode(), categoryId, status);
     }
 
     public List<UnifiedOrder> list(PayBizEnum payBiz, OrderStatusEnum status, Integer page, Integer pageSize, Long categoryId) {
@@ -54,5 +55,23 @@ public class UnifiedOrderService extends BaseService<UnifiedOrder> {
         if (pageSize == null || pageSize < 0) pageSize = 100;
 
         return dao.findAllByAppCodeAndRegionIdAndStatusOrderByCreatedDesc(payBiz.getCode(), categoryId, status.getCode(), new PageRequest(page, pageSize));
+    }
+
+    public UnifiedOrder newOrder(PayBizEnum biz, User user, String title, int payMuch) {
+        UnifiedOrder order = new UnifiedOrder();
+        order.setAppCode(biz.getCode());
+        order.setCouponId(null);
+        order.setOpenId(user.getOpenId());
+        order.setRegionId(user.getRegionId());
+        order.setUserId(user.getId());
+        order.setUserName(user.getUserName());
+        order.setTitle(title);
+        order.setShouldPay(payMuch);
+        order.setOriginalPrice(payMuch);
+        return save(order);
+    }
+
+    public List<UnifiedOrder> listByUserAndBiz(User user, PayBizEnum fruitTakeOut) {
+        return null;
     }
 }

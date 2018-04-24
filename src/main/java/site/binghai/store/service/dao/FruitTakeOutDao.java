@@ -13,4 +13,6 @@ import java.util.List;
 public interface FruitTakeOutDao extends JpaRepository<FruitTakeOut, Long> {
     List<FruitTakeOut> findAllByOrderByCreatedDesc(Pageable pageable);
     FruitTakeOut findByUnifiedOrderId(Long uid);
+    List<FruitTakeOut> findAllByUserIdOrderByCreatedDesc(Long uid);
+    List<FruitTakeOut> findAllByTakeOutStatus(int state);
 }

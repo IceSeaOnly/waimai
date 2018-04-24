@@ -23,4 +23,9 @@ public class TradeItem extends BaseEntity{
     private String img;
     private Integer saleCount;
     private Boolean onLine;
+    private Integer remains; // 剩余
+
+    public double getDoublePrice(){
+        return price/100.0;
+    }
 }

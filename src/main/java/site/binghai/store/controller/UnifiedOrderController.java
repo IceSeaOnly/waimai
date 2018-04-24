@@ -50,24 +50,67 @@ public class UnifiedOrderController extends BaseController {
         for (UnifiedOrder order : orders) {
             JSONObject item = toJsonObject(order);
             item.put("orders", getMoreOrderInfo(order));
+            item.put("operations", buildOperations(order));
             list.add(item);
         }
 
         JSONObject data = newJSONObject();
-        data.put("list",list);
-        data.put("total",unifiedOrderService.countByAppCodeAndRegionIdAndStatus(payBiz,regionId,status.getCode()));
-        data.put("pageSize",pageSize);
-        data.put("currentPage",page);
+        data.put("list", list);
+        data.put("total", unifiedOrderService.countByAppCodeAndRegionIdAndStatus(payBiz, regionId, status.getCode()));
+        data.put("pageSize", pageSize);
+        data.put("currentPage", page);
         return success(data, "SUCCESS");
     }
 
     /**
+     * 传入该订单的操作按钮
+     */
+    private JSONArray buildOperations(UnifiedOrder order) {
+        JSONArray arr = newJSONArray();
+
+        OrderStatusEnum status = OrderStatusEnum.valueOf(order.getStatus());
+        switch (status) {
+            case CREATED:
+            case PAYING:
+                break;
+            case PAIED:
+            case PROCESSING:
+            case COMPLETE:
+                arr.add(buildButtonOperation("/admin/uo/accept", "接单", true));
+                arr.add(buildButtonOperation("/admin/uo/cancel", "取消", false));
+                break;
+            case REFUNDING:
+                arr.add(buildButtonOperation("/admin/uo/refund", "同意退款", true));
+                break;
+            default:
+                break;
+
+        }
+        return arr;
+    }
+
+    /**
+     * 创建按钮方法
+     *
+     * @param url     点击该按钮后回调的链接
+     * @param name    按钮名
+     * @param actived 是否显示为激活态
+     */
+    private JSONObject buildButtonOperation(String url, String name, Boolean actived) {
+        JSONObject btn = newJSONObject();
+        btn.put("url", url);
+        btn.put("name", name);
+        btn.put("active", actived);
+        return btn;
+    }
+
+    /**
      * 根据不同类型的订单补充详细的订单信息
-     * */
+     */
     private Object getMoreOrderInfo(UnifiedOrder order) {
         PayBizEnum biz = PayBizEnum.valueOf(order.getAppCode());
 
-        switch (biz){
+        switch (biz) {
             case FRUIT_TAKE_OUT:
                 return fruitTakeOutService.moreInfo(order);
         }

@@ -2,6 +2,7 @@ package site.binghai.store.entity;
 
 import lombok.Data;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -20,4 +21,10 @@ public class Category extends BaseEntity {
     private String name;
     private Long fid; // 父级id
     private String fName; // 父级类目名
+    /**
+     * 如果是超级类目
+     * 超级类目代表一个地区，这里是该地区首页附加代码
+     * */
+    @Column(columnDefinition = "TEXT")
+    private String indexScript;
 }

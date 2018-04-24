@@ -1,0 +1,33 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0"/>
+    <title>告知页</title>
+
+    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
+    <script type='text/javascript' src='http://g.alicdn.com/sj/lib/zepto/zepto.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/sm.min.js' charset='utf-8'></script>
+
+
+</head>
+<body>
+<div class="page-group">
+    <!-- 你的html代码 -->
+    <div class="page">
+
+        <div class="content">
+            <div align="center" style="padding-top: 50%">
+                <h3 th:text="${title}">TITLE</h3>
+                <p th:text="${info}">your text here</p>
+                <div class="content-block">
+                    <p><a th:href="${url}" class="button button-big" th:text="${btn}" external>BTN NAME</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $.init();
+</script>
+</body>
+</html>

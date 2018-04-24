@@ -23,14 +23,6 @@ public class LoginController extends BaseController {
     private AdminService adminService;
 
     /**
-     * 用户前往微信身份认证
-     */
-    @RequestMapping("userLogin")
-    public String userLogin() {
-        return "redirect:";
-    }
-
-    /**
      * 管理登录
      */
     @RequestMapping(value = "adminLogin", method = RequestMethod.GET)
@@ -73,4 +65,5 @@ public class LoginController extends BaseController {
         session.invalidate();
         return "redirect:/adminDashBoard/";
     }
+
 }

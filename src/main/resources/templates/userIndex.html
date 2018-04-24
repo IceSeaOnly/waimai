@@ -1,0 +1,65 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0"/>
+    <title>果然鲜</title>
+
+    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
+    <script type='text/javascript' src='http://g.alicdn.com/sj/lib/zepto/zepto.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/sm.min.js' charset='utf-8'></script>
+    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/??sm.min.css,sm-extend.min.css">
+    <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/??sm.min.js,sm-extend.min.js'
+            charset='utf-8'></script>
+
+
+</head>
+<body>
+<div class="page-group">
+    <!-- 你的html代码 -->
+    <div class="page">
+        <nav class="bar bar-tab">
+            <a class="tab-item external active" href="/user/index">
+                <span class="icon icon-home"></span>
+                <span class="tab-label">首页</span>
+            </a>
+            <a class="tab-item external" href="/user/cart">
+                <span class="icon icon-app"></span>
+                <span class="tab-label">商城</span>
+            </a>
+            <a class="tab-item external " href="/user/orderList">
+                <span class="icon icon-cart"></span>
+                <span class="tab-label">订单</span>
+            </a>
+            <a class="tab-item external " href="/user/member">
+                <span class="icon icon-me"></span>
+                <span class="tab-label">我的</span>
+            </a>
+        </nav>
+        <div class="content">
+            <!-- Slider -->
+            <div class="swiper-container" data-autoplay='2000'>
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide" th:each="img:${imgs}">
+                        <img th:src="${img.img}" style="width: 100%">
+                    </div>
+                </div>
+                <div class="swiper-pagination"></div>
+            </div>
+
+            <div id="innerHtml"></div>
+        </div>
+    </div>
+</div>
+<script>
+    $.init();
+
+    $(document).ready(function(){
+        console.log("load extra html...")
+        $.get('/user/indexScript',function (data) {
+            console.log(data);
+            $("#innerHtml").html(data);
+        })
+    });
+</script>
+</body>
+</html>

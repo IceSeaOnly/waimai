@@ -1,0 +1,161 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+    <title>果然鲜水果超市</title>
+
+    <link rel="stylesheet" href="http://cdn.binghai.site/o_1cbm5so0fok4cjjfqc1jla1n2ua.css">
+    <script type='text/javascript' src='http://cdn.binghai.site/o_1cbm1c767ctvfbsv7119771dcia.js' charset='utf-8'></script>
+
+</head>
+
+<body>
+<div style="height:33px;background-image:url('http://cdn.binghai.site/o_1cbm3v6l5ghi1gg81g7o1jkg1r4ra.png');background-size:100%;background-repeat: no-repeat;">
+    <a href="/user/index">
+        <img src="http://cdn.binghai.site/o_1cbm27r4q1t1d1ahjsjj1gj8htna.png" style="width: 33px;height: 33px" />
+    </a>
+</div>
+<div class="main">
+    <div class="left-menu">
+        <ul>
+            <li th:each="menu,stat:${menus}" th:class="${stat.first?'active':''}">
+                <span th:text="${menu.name}">营养套餐</span>
+                <span th:id="${'mul_'+menu.id}"></span><span class="num-price" th:id="${'cul_'+menu.id}"></span>
+            </li>
+        </ul>
+    </div>
+    <div class="con">
+        <div th:each="st,state:${itemSet}" th:class="${state.first?'right-con con-active':'right-con'}">
+            <ul>
+                <li th:each="item:${st}">
+                    <div class="menu-img"><img th:src="${item.img}" width="55" height="55" /></div>
+                    <div class="menu-txt">
+                        <h4 th:text="${item.name}">宫保鸡丁</h4>
+                        <p class="list1"th:text="${'已售:'+item.saleCount+',可售:'+item.remains}"></p>
+                        <p class="list2">
+                            <b th:text="${'￥'+(item.getDoublePrice())}">￥25</b>
+                        <div class="btn">
+                            <button class="minus" th:name="${'input_'+item.categoryId+'_'+item.id}">
+                                <strong></strong>
+                            </button>
+                            <i>0</i>
+                            <button class="add" th:name="${'input_'+item.categoryId+'_'+item.id}">
+                                <strong></strong>
+                            </button>
+                            <i class="price" th:text="${item.getDoublePrice()}">25</i>
+                        </div>
+                        </p>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <form action="/user/submitOrder" method="post" id="input_form">
+        <input th:each="itemId:${itemIds}" type="hidden" th:id="${'input_'+itemId}" th:name="${'item_'+itemId}" value="0">
+    </form>
+
+    <div class="footer">
+        <div class="left">已选：
+            <span id="cartN">
+			<span id="totalcountshow">0</span>份　总计：￥<span id="totalpriceshow">0</span></span>元
+        </div>
+        <div class="right">
+            <a id="btnselect" class="xhlbtn  disable" onclick="makeOrder()">去结算</a>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function makeOrder(){
+        $("#input_form").submit();
+    }
+
+    function setCate(sname,val){
+        var bid = sname.split("_")[1];
+        var mid = "#mul_"+bid;
+        var id = "#cul_"+bid;
+        var num = 0;
+        if($(id).text() != '') num = parseInt($(id).text());
+        num += val;
+
+        if(num == 0){
+            $(mid).text('');
+            $(id).text('');
+        }else{
+            $(mid).text('*');
+            $(id).text(num);
+        }
+    }
+
+    function getInputId(sname){
+        return "#input_"+sname.split("_")[2];
+    }
+
+    $(function () {
+        //加的效果
+        $(".add").click(function () {
+            $(this).prevAll().css("display", "inline-block");
+            var n = $(this).prev().text();
+            var num = parseInt(n) + 1;
+            if (num == 0) { return; }
+
+            $(this).prev().text(num);
+            $(getInputId(this.name)).val(num);
+            setCate(this.name,1);
+
+            var danjia = $(this).next().text();//获取单价
+            var a = $("#totalpriceshow").html();//获取当前所选总价
+            $("#totalpriceshow").html((a * 1 + danjia * 1).toFixed(2));//计算当前所选总价
+
+            var nm = $("#totalcountshow").html();//获取数量
+            $("#totalcountshow").html(nm*1+1);
+            jss();//<span style='font-family: Arial, Helvetica, sans-serif;'></span>   改变按钮样式
+        });
+        //减的效果
+        $(".minus").click(function () {
+            var n = $(this).next().text();
+            var num = parseInt(n) - 1;
+
+            $(this).next().text(num);//减1
+            $(getInputId(this.name)).val(num);
+            setCate(this.name,-1);
+
+            var danjia = $(this).nextAll(".price").text();//获取单价
+            var a = $("#totalpriceshow").html();//获取当前所选总价
+            $("#totalpriceshow").html((a * 1 - danjia * 1).toFixed(2));//计算当前所选总价
+
+            var nm = $("#totalcountshow").html();//获取数量
+            $("#totalcountshow").html(nm * 1 - 1);
+            //如果数量小于或等于0则隐藏减号和数量
+            if (num <= 0) {
+                $(this).next().css("display", "none");
+                $(this).css("display", "none");
+                jss();//改变按钮样式
+                return
+            }
+        });
+        function jss() {
+            var m = $("#totalcountshow").html();
+            if (m > 0) {
+                $(".right").find("a").removeClass("disable");
+            } else {
+                $(".right").find("a").addClass("disable");
+            }
+        };
+        //选项卡
+        $(".con>div").hide();
+        $(".con>div:eq(0)").show();
+
+        $(".left-menu li").click(function(){
+            $(this).addClass("active").siblings().removeClass("active");
+            var n = $(".left-menu li").index(this);
+            $(".left-menu li").index(this);
+            $(".con>div").hide();
+            $(".con>div:eq("+n+")").show();
+        });
+    });
+</script>
+
+</body>
+</html>

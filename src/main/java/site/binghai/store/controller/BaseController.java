@@ -2,12 +2,14 @@ package site.binghai.store.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import site.binghai.store.entity.Admin;
 import site.binghai.store.entity.User;
 import site.binghai.store.tools.BaseBean;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -16,6 +18,15 @@ import javax.servlet.http.HttpSession;
  * GitHub: https://github.com/IceSeaOnly
  */
 public class BaseController extends BaseBean {
+
+    protected String commonResp(String title, String info, String btn, String url, ModelMap map) {
+        map.put("title",title);
+        map.put("btn",btn);
+        map.put("info",info);
+        map.put("url",url);
+        return "commonResp";
+    }
+
     /**
      * 从thread local获取网络上下文
      */
@@ -29,7 +40,7 @@ public class BaseController extends BaseBean {
         return null;
     }
 
-    public HttpSession getSession(){
+    public HttpSession getSession() {
         return getServletRequest().getSession();
     }
 

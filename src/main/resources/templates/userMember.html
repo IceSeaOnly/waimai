@@ -1,0 +1,77 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>我的会员</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
+    <script type='text/javascript' src='http://g.alicdn.com/sj/lib/zepto/zepto.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/sm.min.js' charset='utf-8'></script>
+    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/??sm.min.css,sm-extend.min.css">
+    <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/??sm.min.js,sm-extend.min.js'
+            charset='utf-8'></script>
+
+
+    <link rel="stylesheet" href="/css/font.css">
+    <link rel="stylesheet" href="/css/index.css">
+</head>
+<body>
+
+<div class="page-group">
+    <!-- 你的html代码 -->
+    <div class="page">
+        <nav class="bar bar-tab">
+            <a class="tab-item external" href="/user/index">
+                <span class="icon icon-home"></span>
+                <span class="tab-label">首页</span>
+            </a>
+            <a class="tab-item external" href="/user/cart">
+                <span class="icon icon-app"></span>
+                <span class="tab-label">商城</span>
+            </a>
+            <a class="tab-item external " href="/user/orderList">
+                <span class="icon icon-cart"></span>
+                <span class="tab-label">订单</span>
+            </a>
+            <a class="tab-item external active" href="/user/member">
+                <span class="icon icon-me"></span>
+                <span class="tab-label">我的</span>
+            </a>
+        </nav>
+        <div class="member-header">
+            <p></p>
+            <div class="memberhead"><img th:src="${session.user.avatar}" alt=""><i class="icon-woman"></i></div>
+
+            <div class="waves1 icon-waves"></div>
+            <div class="waves2 icon-waves"></div>
+            <div class="waves3 icon-waves"></div>
+        </div>
+
+        <div class="list">
+            <ul class="line">
+                <a href="/user/orderList">
+                    <li><i class="icon icon-menu"></i>我的订单<span class="icon-arrowright"></span></li>
+                </a>
+            </ul>
+            <ul class="line">
+                <a href="/user/couponList">
+                    <li><i class="icon icon-gift"></i>优惠券<span class="icon-arrowright"></span></li>
+                </a>
+                <a href="/user/memberInfo">
+                    <li><i class="icon icon-edit"></i>我的信息<span class="icon-arrowright"></span></li>
+                </a>
+            </ul>
+
+        </div>
+
+    </div>
+
+    <script>
+        $.init();
+    </script>
+</body>
+</html>

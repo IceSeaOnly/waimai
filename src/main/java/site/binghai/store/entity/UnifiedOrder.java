@@ -26,6 +26,7 @@ public class UnifiedOrder extends BaseEntity {
     private String title;
     private String remark;
     private String openId;
+    private Long userId;
     private String userName;
     private String orderId;
     private Long regionId; // 区域id，即一级类目categoryId
@@ -56,5 +57,17 @@ public class UnifiedOrder extends BaseEntity {
     @Override
     public Long getId() {
         return id;
+    }
+
+    public OrderStatusEnum orderState(){
+        return OrderStatusEnum.valueOf(status);
+    }
+
+    public double originalDoublePrice(){
+        return originalPrice/100.0;
+    }
+
+    public double shouldPayDouble(){
+        return shouldPay/100.0;
     }
 }

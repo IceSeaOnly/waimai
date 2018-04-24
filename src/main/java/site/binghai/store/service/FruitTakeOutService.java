@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import site.binghai.store.def.UnifiedOrderMethods;
 import site.binghai.store.entity.FruitTakeOut;
 import site.binghai.store.entity.UnifiedOrder;
+import site.binghai.store.entity.User;
+import site.binghai.store.enums.TakeOutStatusEnum;
 import site.binghai.store.service.dao.FruitTakeOutDao;
 
 import java.util.List;
@@ -33,8 +35,20 @@ public class FruitTakeOutService extends BaseService<FruitTakeOut> implements Un
 
     @Override
     public Object moreInfo(UnifiedOrder order) {
-            FruitTakeOut out = dao.findByUnifiedOrderId(order.getId());
-        if(out == null) return false;
+        FruitTakeOut out = dao.findByUnifiedOrderId(order.getId());
+        if (out == null) return false;
         return JSONArray.parseArray(out.getTradeItemJson());
+    }
+
+    public List<FruitTakeOut> listByUserAndBiz(User user) {
+        return dao.findAllByUserIdOrderByCreatedDesc(user.getId());
+    }
+
+    public FruitTakeOut findByUnifiedId(Long unifiedId) {
+        return dao.findByUnifiedOrderId(unifiedId);
+    }
+
+    public List<FruitTakeOut> findByState(TakeOutStatusEnum state) {
+        return dao.findAllByTakeOutStatus(state.getCode());
     }
 }
