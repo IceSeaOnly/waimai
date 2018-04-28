@@ -19,7 +19,7 @@ public class AdminService extends BaseService<Admin> {
             return null;
         }
         for (Admin admin : adminList) {
-            if (admin.getBanned() || admin.isHasDeleted()) {
+            if (admin.getBanned()) {
                 continue;
             }
 

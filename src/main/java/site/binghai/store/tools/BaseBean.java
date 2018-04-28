@@ -3,11 +3,13 @@ package site.binghai.store.tools;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -32,5 +34,13 @@ public abstract class BaseBean extends MapUtils {
 
     protected JSONObject toJsonObject(Object obj) {
         return JSONObject.parseObject(JSONObject.toJSONString(obj));
+    }
+
+    protected boolean noEmptyString(Collection<String> strs){
+        for (String str : strs) {
+            if(StringUtils.isEmpty(str))
+                return false;
+        }
+        return true;
     }
 }

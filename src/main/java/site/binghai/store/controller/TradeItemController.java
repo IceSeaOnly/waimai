@@ -71,6 +71,8 @@ public class TradeItemController extends BaseController {
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
     public Object add(@RequestBody Map map) {
+        map.put("price", Double.valueOf(getDoubleValue(map, "price") * 100).intValue());
+
         TradeItem item = tradeItemService.newInstance(map);
         item.setId(null);
         item.setSaleCount(0);

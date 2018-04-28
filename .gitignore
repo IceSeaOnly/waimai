@@ -26,6 +26,8 @@ dist/
 nbdist/
 .nb-gradle/
 
+application.properties
+
 km2.txt
 logs.log
 logs.log.2018-04-18.0.gz

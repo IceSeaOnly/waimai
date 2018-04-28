@@ -2,7 +2,9 @@ package site.binghai.store.service;
 
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import site.binghai.store.entity.Admin;
@@ -62,7 +64,7 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
     }
 
     public T findById(Long id) {
-        if(id == null) return null;
+        if (id == null) return null;
         return getDao().findById(id).orElse(null);
     }
 
@@ -90,6 +92,25 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
 
     public List<T> findByIds(List<Long> ids) {
         return getDao().findAllById(ids);
+    }
+
+    public List<T> query(T example) {
+        Example<T> ex = Example.of(example);
+        return getDao().findAll(ex);
+    }
+
+    public T queryOne(T example) {
+        example.setCreated(null);
+        example.setCreatedTime(null);
+        List<T> ls = query(example);
+        return (ls == null || ls.size() == 0) ? null : ls.get(0);
+    }
+
+    public List<T> sortQuery(T example, String sortField, Boolean desc) {
+        example.setCreated(null);
+        example.setCreatedTime(null);
+        Example<T> ex = Example.of(example);
+        return getDao().findAll(ex, Sort.by(desc ? Sort.Direction.DESC : Sort.Direction.ASC, sortField));
     }
 
     public List<T> findAll(int limit) {

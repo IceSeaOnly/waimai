@@ -1,0 +1,224 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0"/>
+    <title>快递业务</title>
+
+    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
+    <script type='text/javascript' src='http://g.alicdn.com/sj/lib/zepto/zepto.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/sm.min.js' charset='utf-8'></script>
+
+
+</head>
+<body>
+<div class="page-group">
+    <!-- 你的html代码 -->
+    <div class="page">
+        <nav class="bar bar-tab">
+            <a class="tab-item external " href="/user/index" external>
+                <span class="icon icon-home"></span>
+                <span class="tab-label">首页</span>
+            </a>
+            <a class="tab-item external active" href="/user/exIndex" external>
+                <span class="icon icon-browser"></span>
+                <span class="tab-label">快递</span>
+            </a>
+            <a class="tab-item external" href="/user/cart" external>
+                <span class="icon icon-app"></span>
+                <span class="tab-label">商城</span>
+            </a>
+            <a class="tab-item external " href="/user/orderList" external>
+                <span class="icon icon-cart"></span>
+                <span class="tab-label">订单</span>
+            </a>
+            <a class="tab-item external " href="/user/member" external>
+                <span class="icon icon-me"></span>
+                <span class="tab-label">我的</span>
+            </a>
+        </nav>
+        <div class="content">
+            <div class="buttons-tab">
+                <a href="#tab1" class="tab-link active button">寄快递</a>
+                <a href="#tab2" class="tab-link button">取快递</a>
+                <a href="#tab3" class="tab-link button">查订单</a>
+            </div>
+            <div class="tabs">
+                <div id="tab1" class="tab active">
+                    <div class="content-padded" th:if="${regionConfig}">
+                        <p style="color: red" th:text="${regionConfig.deliveryExplain}"></p>
+                    </div>
+                    <form action="/user/newDelivery" method="post" id="newDelivery1">
+                        <div class="list-block">
+                            <ul>
+                                <li>
+                                    <div class="item-content">
+                                        <div class="item-media"><i class="icon icon-form-name"></i></div>
+                                        <div class="item-inner">
+                                            <div class="item-title label">寄件人</div>
+                                            <div class="item-input">
+                                                <input type="text" name="from" th:value="${session.user.userName}"
+                                                       placeholder="请输入...">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="item-content">
+                                        <div class="item-media"><i class="icon icon-form-name"></i></div>
+                                        <div class="item-inner">
+                                            <div class="item-title label">寄件电话</div>
+                                            <div class="item-input">
+                                                <input type="text" name="fromPhone" th:value="${session.user.phone}"
+                                                       placeholder="请输入...">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="item-content">
+                                        <div class="item-media"><i class="icon icon-form-name"></i></div>
+                                        <div class="item-inner">
+                                            <div class="item-title label">收件人</div>
+                                            <div class="item-input">
+                                                <input type="text" name="to" placeholder="请输入...">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="item-content">
+                                        <div class="item-media"><i class="icon icon-form-name"></i></div>
+                                        <div class="item-inner">
+                                            <div class="item-title label">收件电话</div>
+                                            <div class="item-input">
+                                                <input type="text" name="toPhone" placeholder="请输入...">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="item-content">
+                                        <div class="item-media"><i class="icon icon-form-name"></i></div>
+                                        <div class="item-inner">
+                                            <div class="item-title label">快件物品</div>
+                                            <div class="item-input">
+                                                <input type="text" name="whatIs" placeholder="衣服、鞋子...">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="item-content">
+                                        <div class="item-media"><i class="icon icon-form-name"></i></div>
+                                        <div class="item-inner">
+                                            <div class="item-title label">费用</div>
+                                            <div class="item-input">
+                                                <input type="text" name="fee" placeholder="请跟老板确认">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+
+
+                                <li class="align-top">
+                                    <div class="item-content">
+                                        <div class="item-media"><i class="icon icon-form-comment"></i></div>
+                                        <div class="item-inner">
+                                            <div class="item-title label">寄送地址</div>
+                                            <div class="item-input">
+                                                <textarea name="toWhere"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="content-block">
+                            <p><a onclick="$('#newDelivery1').submit()" class="button button-big">提交订单</a></p>
+                        </div>
+                    </form>
+                </div>
+                <div id="tab2" class="tab">
+                    <div class="content-padded" th:if="${regionConfig}">
+                        <p style="color: red" th:text="${regionConfig.fetchExplain}"></p>
+                    </div>
+                    <form action="/user/newFetchThing" method="post" id="newDelivery2">
+                        <div class="list-block">
+                            <ul>
+                                <li>
+                                    <div class="item-content">
+                                        <div class="item-media"><i class="icon icon-form-name"></i></div>
+                                        <div class="item-inner">
+                                            <div class="item-title label">取件姓名</div>
+                                            <div class="item-input">
+                                                <input type="text" name="from" th:value="${session.user.userName}" placeholder="请输入...">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="item-content">
+                                        <div class="item-media"><i class="icon icon-form-name"></i></div>
+                                        <div class="item-inner">
+                                            <div class="item-title label">取件电话</div>
+                                            <div class="item-input">
+                                                <input type="text" name="fromPhone" th:value="${session.user.phone}" placeholder="请输入...">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+
+                                <li class="align-top">
+                                    <div class="item-content">
+                                        <div class="item-media"><i class="icon icon-form-comment"></i></div>
+                                        <div class="item-inner">
+                                            <div class="item-title label">通知短信</div>
+                                            <div class="item-input">
+                                                <textarea name="sms" placeholder="此处粘贴通知短信"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="content-block">
+                            <p><a onclick="$('#newDelivery2').submit()" class="button button-big">提交订单</a></p>
+                        </div>
+                    </form>
+                </div>
+                <div id="tab3" class="tab">
+                    <div class="list-block media-list">
+                        <ul>
+                            <li th:each="order:${orders}">
+                                <a th:href="${'/user/confirmExpressOrder?unifiedId='+order.unifiedId}"
+                                   class="item-link item-content">
+                                    <div class="item-inner">
+                                        <div class="item-title-row">
+                                            <div class="item-title" th:text="${order.type==0?'寄快递':'取快递'}">取快递</div>
+                                            <div class="item-after" th:text="${order.createdTime}">2018-04-27 17:14:00
+                                            </div>
+                                        </div>
+                                        <div class="item-subtitle"
+                                             th:text="${order.hasPay?'已支付':(order.canceled?'已取消':'未支付')}">已支付
+                                        </div>
+                                        <!--<div class="item-text" th:text="${order.type==0'完成':''}">正在取快递中</div>-->
+                                    </div>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+</div>
+<script>
+    $.init();
+</script>
+</body>
+</html>
+

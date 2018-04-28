@@ -12,6 +12,7 @@ import java.util.Map;
 @Getter
 public enum PayBizEnum {
     FRUIT_TAKE_OUT(0, "水果外卖"),
+    EXPRESS(1,"快递业务"),
 
     ;
 

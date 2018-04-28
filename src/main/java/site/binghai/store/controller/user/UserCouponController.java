@@ -12,6 +12,7 @@ import site.binghai.store.entity.CouponTicket;
 import site.binghai.store.entity.UnifiedOrder;
 import site.binghai.store.enums.CouponStatusEnum;
 import site.binghai.store.enums.OrderStatusEnum;
+import site.binghai.store.enums.PayBizEnum;
 import site.binghai.store.service.CouponTicketService;
 import site.binghai.store.service.UnifiedOrderService;
 import site.binghai.store.service.UserCouponService;
@@ -50,10 +51,21 @@ public class UserCouponController extends BaseController {
         couponList = couponList.stream()
                 .filter(v -> expFilter(v, exp))
                 .filter(v -> order == null || v.getRegionId().equals(order.getRegionId()))
+                .filter(v -> order == null || v.getAppCode().equals(order.getAppCode()))
                 .collect(Collectors.toList());
 
         if (unifiedId != null && CollectionUtils.isEmpty(couponList)) {
-            return commonResp("无可用优惠券", "该订单没有任何可用优惠券", "好的", "/user/confirmOrder?unifiedId=" + unifiedId, map);
+            String url = null;
+            PayBizEnum biz = PayBizEnum.valueOf(order.getAppCode());
+            switch (biz){
+                case FRUIT_TAKE_OUT:
+                    url = "/user/confirmOrder?unifiedId=";
+                    break;
+                case EXPRESS:
+                    url = "/user/confirmExpressOrder?unifiedId=";
+                    break;
+            }
+            return commonResp("无可用优惠券", "该订单没有任何可用优惠券", "好的", url + unifiedId, map);
         }
 
         userCouponService.couponInfo(couponList);
@@ -82,21 +94,13 @@ public class UserCouponController extends BaseController {
             return commonResp("输入有误", "请勿拼接参数", "返回主页", "/user/index", map);
         }
 
-        Coupon coupon = userCouponService.findById(cpId);
-        if (coupon == null || !coupon.getUserId().equals(getUser().getId())) {
-            return commonResp("输入有误", "请勿拼接参数", "返回主页", "/user/index", map);
+        try {
+            userCouponService.bindOrder(cpId, order);
+        } catch (Exception e) {
+            logger.error("{} bind coupon {} failed.",order,cpId,e);
+            return commonResp("发生错误", e.getMessage(), "返回主页", "/user/index", map);
         }
 
-        if (!coupon.getCouponStatus().equals(CouponStatusEnum.AVAILABLE.getCode())
-                || !coupon.getRegionId().equals(order.getRegionId())) {
-            return commonResp("优惠券错误", "优惠券不可用", "返回主页", "/user/index", map);
-        }
-
-        if (order.getStatus() >= OrderStatusEnum.PAIED.getCode()) {
-            return commonResp("订单已支付", "订单已支付,优惠券不可用", "返回主页", "/user/index", map);
-        }
-
-        userCouponService.bindOrder(cpId, order);
         unifiedOrderService.update(order);
 
         return "redirect:/user/confirmOrder?unifiedId=" + order.getId();
@@ -119,6 +123,7 @@ public class UserCouponController extends BaseController {
             return commonResp("不要太贪心哦", "你已经领过该优惠券了!", "返回主页", "/user/index", map);
         }
         coupon = new Coupon();
+        coupon.setAppCode(ticket.getAppCode());
         coupon.setCouponStatus(CouponStatusEnum.AVAILABLE.getCode());
         coupon.setCouponId(ticket.getId());
         coupon.setOpenId(getUser().getOpenId());

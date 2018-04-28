@@ -12,29 +12,20 @@ import javax.persistence.MappedSuperclass;
  */
 @MappedSuperclass
 public abstract class BaseEntity {
-    private boolean hasDeleted;
-    private long created;
+    private Long created;
     private String createdTime;
 
     public BaseEntity() {
-        hasDeleted = false;
         created = TimeTools.currentTS();
         createdTime = TimeTools.format(created);
     }
 
-    public boolean isHasDeleted() {
-        return hasDeleted;
-    }
 
-    public void setHasDeleted(boolean hasDeleted) {
-        this.hasDeleted = hasDeleted;
-    }
-
-    public long getCreated() {
+    public Long getCreated() {
         return created;
     }
 
-    public void setCreated(long created) {
+    public void setCreated(Long created) {
         this.created = created;
     }
 

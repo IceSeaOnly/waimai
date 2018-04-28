@@ -16,8 +16,8 @@
     <!--优惠券列表-->
     <div class="Coupon-Content line">
         <div class="Coupon-Content-header line" th:if="${!hideTab}">
-            <a href="/user/couponList" th:class="${!exp?'line':'line active'}">可用优惠券</a><a
-                href="/user/couponList?exp=1" th:class="${exp?'line':'line active'}">失效优惠券</a>
+            <a href="/user/couponList" th:class="${!exp?'line':'line active'}" external>可用优惠券</a><a
+                href="/user/couponList?exp=1" th:class="${exp?'line':'line active'}" external>失效优惠券</a>
         </div>
 
         <div class="Coupon-Content-list">

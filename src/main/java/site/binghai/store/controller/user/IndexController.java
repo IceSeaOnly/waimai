@@ -27,7 +27,8 @@ public class IndexController extends BaseController {
     private AddressService addressService;
     @Autowired
     private UserService userService;
-
+    @Autowired
+    private RegionConfigService regionConfigService;
 
 
     @RequestMapping("index")
@@ -38,9 +39,9 @@ public class IndexController extends BaseController {
 
     @RequestMapping("indexScript")
     @ResponseBody
-    public Object indexScript(){
-        Category cat = categoryService.findById(getUser().getRegionId());
-        return cat.getIndexScript();
+    public Object indexScript() {
+        RegionConfig config = regionConfigService.findByRegionId(getUser().getRegionId());
+        return config == null ? "" : config.getIndexScript();
     }
 
 
@@ -78,6 +79,7 @@ public class IndexController extends BaseController {
 
         User user = getUser();
         user.setRegionId(regionId);
+        user.setRegionName(region.getName());
         user.setPhone(phone);
         user.setUserName(userName);
 

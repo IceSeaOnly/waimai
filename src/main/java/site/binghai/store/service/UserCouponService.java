@@ -7,6 +7,7 @@ import site.binghai.store.entity.CouponTicket;
 import site.binghai.store.entity.UnifiedOrder;
 import site.binghai.store.entity.User;
 import site.binghai.store.enums.CouponStatusEnum;
+import site.binghai.store.enums.OrderStatusEnum;
 import site.binghai.store.service.dao.UserCouponDao;
 import site.binghai.store.tools.TimeTools;
 
@@ -54,14 +55,39 @@ public class UserCouponService extends BaseService<Coupon> {
     }
 
     @Transactional
-    public void bindOrder(Long cpId, UnifiedOrder order) {
+    public void bindOrder(Long cpId, UnifiedOrder order) throws Exception {
+        if(cpId == null || order == null){
+            throw new Exception("参数不得为空");
+        }
         if (order.getCouponId() != null) {
             rollBackCoupon(order);
         }
 
+        if (order.getStatus() >= OrderStatusEnum.PAIED.getCode()) {
+            throw  new Exception("订单已支付,优惠券不可用");
+        }
+
         Coupon coupon = findById(cpId);
-        if (coupon == null) return;
-        if (!coupon.getCouponStatus().equals(CouponStatusEnum.AVAILABLE.getCode())) return;
+
+        if (coupon == null){
+            throw new Exception("优惠券不存在!");
+        }
+
+        if (!coupon.getCouponStatus().equals(CouponStatusEnum.AVAILABLE.getCode())){
+            throw new Exception("优惠券不可用!");
+        }
+
+        if(!coupon.getAppCode().equals(order.getAppCode())){
+            throw new Exception("使用场景不同!");
+        }
+
+        if(!coupon.getRegionId().equals(order.getRegionId())){
+            throw new Exception("使用区域不同!");
+        }
+
+        if(!coupon.getUserId().equals(order.getUserId())){
+            throw new Exception("优惠券所属错误!");
+        }
 
         coupon.setOrderId(order.getId());
         coupon.setCouponStatus(CouponStatusEnum.USED.getCode());

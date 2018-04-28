@@ -25,6 +25,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/adminDashBoard/").setViewName("admin");
+        registry.addViewController("/").setViewName("admin");
     }
 
     @Override

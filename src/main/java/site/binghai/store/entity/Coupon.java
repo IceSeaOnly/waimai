@@ -17,6 +17,7 @@ public class Coupon extends BaseEntity{
     @Id
     @GeneratedValue
     private Long id;
+    private Integer appCode; // 可用支付场景
     private Long couponId;
     private Long orderId; //关联的订单id
     private Long userId;

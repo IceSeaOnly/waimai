@@ -21,11 +21,12 @@ public class CouponTicket extends BaseEntity {
     @Id
     @GeneratedValue
     private Long id;
+    private String uuid;
     /**
      * 优惠类型 {@link site.binghai.store.enums.CouponTypeEnum}
      */
-    private String uuid;
     private Integer couponType;
+    private Integer appCode;
     private Integer val; // 该券的值，根据不同优惠类型代表不同含义
     private Long SpecificProduct; // 特定产品使用,暂时不用
     private Integer remaining; // 剩余量

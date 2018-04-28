@@ -1,0 +1,70 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=0">
+    <title>确认订单</title>
+
+    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
+    <script type="text/javascript" src="http://g.alicdn.com/sj/lib/zepto/zepto.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="http://g.alicdn.com/msui/sm/0.6.2/js/sm.min.js" charset="utf-8"></script>
+    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/??sm.min.css,sm-extend.min.css">
+    <script type="text/javascript" src="http://g.alicdn.com/msui/sm/0.6.2/js/??sm.min.js,sm-extend.min.js"
+            charset="utf-8"></script>
+
+
+</head>
+<body>
+<div class="page-group">
+    <!-- 你的html代码 -->
+    <div class="page">
+        <div class="content">
+            <div class="list-block">
+                <ul>
+                    <li class="item-content ">
+                        <div class="item-inner">
+                            <div class="item-title">订单：</div>
+                            <div class="item-after" th:text="${title}">寄快递</div>
+                        </div>
+                    </li>
+                    <li class="item-content ">
+                        <div class="item-inner">
+                            <div class="item-title">创建时间</div>
+                            <div class="item-after" th:text="${order.createdTime}">2018-04-28 13:52:00</div>
+                        </div>
+                    </li>
+                    <a th:href="${'/user/couponList?unifiedId='+uorder.id}" external>
+                        <li class="item-content item-link">
+                            <div class="item-inner">
+                                <div class="item-title">优惠券</div>
+                                <div class="item-after" th:text="${uorder.couponId==-1?'已使用':'无'}">无</div>
+                            </div>
+                        </li>
+                    </a>
+                    <li class="item-content ">
+                        <div class="item-inner">
+                            <div class="item-title">订单金额</div>
+                            <div class="item-after" style="color: red" th:text="${uorder.shouldPayDouble()}">￥12</div>
+                        </div>
+                    </li>
+                    <li class="item-content ">
+                        <div class="item-inner">
+                            <div class="item-title">状态</div>
+                            <div class="item-after" th:text="${order.hasPay?'已支付':(order.canceled?'已取消':'未支付')}">待支付</div>
+                        </div>
+                    </li>
+                </ul>
+                <div class="content-block" th:if="${!order.hasPay && !order.canceled}">
+                    <p><a th:href="${'/user/goToPay?unifiedId='+uorder.id}" class="button button-big">立即支付</a></p>
+                </div>
+                <div class="content-block-title">订单详细信息</div>
+                <div class="content-padded">
+                    <p th:utext="${detail}"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
