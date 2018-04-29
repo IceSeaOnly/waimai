@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import site.binghai.store.entity.UnifiedOrder;
 import site.binghai.store.enums.OrderStatusEnum;
 import site.binghai.store.enums.PayBizEnum;
+import site.binghai.store.service.ExpressOrderService;
 import site.binghai.store.service.FruitTakeOutService;
 import site.binghai.store.service.UnifiedOrderService;
 
@@ -26,6 +27,8 @@ public class UnifiedOrderController extends BaseController {
     private UnifiedOrderService unifiedOrderService;
     @Autowired
     private FruitTakeOutService fruitTakeOutService;
+    @Autowired
+    private ExpressOrderService expressOrderService;
 
     /**
      * currentCategory: {@OrderStatusEnum}
@@ -113,6 +116,8 @@ public class UnifiedOrderController extends BaseController {
         switch (biz) {
             case FRUIT_TAKE_OUT:
                 return fruitTakeOutService.moreInfo(order);
+            case EXPRESS:
+                return expressOrderService.moreInfo(order);
         }
         return null;
     }
