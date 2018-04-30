@@ -37,7 +37,7 @@
                         <li class="item-content item-link">
                             <div class="item-inner">
                                 <div class="item-title">优惠券</div>
-                                <div class="item-after" th:text="${uorder.couponId==-1?'已使用':'无'}">无</div>
+                                <div class="item-after" th:text="${uorder.couponId>0?'已使用':'无'}">无</div>
                             </div>
                         </li>
                     </a>

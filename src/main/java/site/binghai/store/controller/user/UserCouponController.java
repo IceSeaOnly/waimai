@@ -102,8 +102,17 @@ public class UserCouponController extends BaseController {
         }
 
         unifiedOrderService.update(order);
-
-        return "redirect:/user/confirmOrder?unifiedId=" + order.getId();
+        String url = null;
+        PayBizEnum biz = PayBizEnum.valueOf(order.getAppCode());
+        switch (biz){
+            case FRUIT_TAKE_OUT:
+                url = "/user/confirmOrder?unifiedId=";
+                break;
+            case EXPRESS:
+                url = "/user/confirmExpressOrder?unifiedId=";
+                break;
+        }
+        return url + order.getId();
     }
 
     /**
