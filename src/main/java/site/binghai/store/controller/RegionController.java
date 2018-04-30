@@ -1,10 +1,13 @@
 package site.binghai.store.controller;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import site.binghai.store.entity.RegionConfig;
 import site.binghai.store.service.RegionConfigService;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,7 +23,14 @@ public class RegionController extends BaseController {
     @GetMapping("list")
     public Object list(Long regionId) {
         if (regionId == null) {
-            return success(regionConfigService.findAll(999), "SUCCESS");
+            JSONArray array = newJSONArray();
+            List<RegionConfig> configs = regionConfigService.findAll(999);
+            for (RegionConfig config : configs) {
+                JSONObject object = toJsonObject(config);
+                object.put("fetchFee", config.getFetchFee() / 100.0);
+                array.add(object);
+            }
+            return success(array, "SUCCESS");
         } else {
             RegionConfig regionConfig = regionConfigService.findByRegionId(regionId);
             if (regionConfig == null) {
@@ -35,6 +45,7 @@ public class RegionController extends BaseController {
 
     @PostMapping("update")
     public Object update(@RequestBody Map map) {
+        map.put("fetchFee", Double.valueOf(getDoubleValue(map, "fetchFee") * 100).intValue());
         logger.warn("{} update regionConfig to {}", getAdmin(), map);
         try {
             regionConfigService.updateAndSave(getAdmin(), map);

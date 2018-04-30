@@ -57,7 +57,7 @@ public class UserCouponController extends BaseController {
         if (unifiedId != null && CollectionUtils.isEmpty(couponList)) {
             String url = null;
             PayBizEnum biz = PayBizEnum.valueOf(order.getAppCode());
-            switch (biz){
+            switch (biz) {
                 case FRUIT_TAKE_OUT:
                     url = "/user/confirmOrder?unifiedId=";
                     break;
@@ -73,7 +73,7 @@ public class UserCouponController extends BaseController {
         map.put("unifiedId", unifiedId);
         map.put("hideTab", unifiedId != null);
         map.put("coupons", couponList);
-        map.put("exp",exp == null);
+        map.put("exp", exp == null);
         return "userCouponList";
     }
 
@@ -97,14 +97,14 @@ public class UserCouponController extends BaseController {
         try {
             userCouponService.bindOrder(cpId, order);
         } catch (Exception e) {
-            logger.error("{} bind coupon {} failed.",order,cpId,e);
+            logger.error("{} bind coupon {} failed.", order, cpId, e);
             return commonResp("发生错误", e.getMessage(), "返回主页", "/user/index", map);
         }
 
         unifiedOrderService.update(order);
         String url = null;
         PayBizEnum biz = PayBizEnum.valueOf(order.getAppCode());
-        switch (biz){
+        switch (biz) {
             case FRUIT_TAKE_OUT:
                 url = "/user/confirmOrder?unifiedId=";
                 break;
@@ -112,7 +112,7 @@ public class UserCouponController extends BaseController {
                 url = "/user/confirmExpressOrder?unifiedId=";
                 break;
         }
-        return url + order.getId();
+        return "redirect:" + url + order.getId();
     }
 
     /**

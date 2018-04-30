@@ -56,7 +56,7 @@ public class UserCouponService extends BaseService<Coupon> {
 
     @Transactional
     public void bindOrder(Long cpId, UnifiedOrder order) throws Exception {
-        if(cpId == null || order == null){
+        if (cpId == null || order == null) {
             throw new Exception("参数不得为空");
         }
         if (order.getCouponId() != null) {
@@ -64,28 +64,28 @@ public class UserCouponService extends BaseService<Coupon> {
         }
 
         if (order.getStatus() >= OrderStatusEnum.PAIED.getCode()) {
-            throw  new Exception("订单已支付,优惠券不可用");
+            throw new Exception("订单已支付,优惠券不可用");
         }
 
         Coupon coupon = findById(cpId);
 
-        if (coupon == null){
+        if (coupon == null) {
             throw new Exception("优惠券不存在!");
         }
 
-        if (!coupon.getCouponStatus().equals(CouponStatusEnum.AVAILABLE.getCode())){
+        if (!coupon.getCouponStatus().equals(CouponStatusEnum.AVAILABLE.getCode())) {
             throw new Exception("优惠券不可用!");
         }
 
-        if(!coupon.getAppCode().equals(order.getAppCode())){
+        if (!coupon.getAppCode().equals(order.getAppCode())) {
             throw new Exception("使用场景不同!");
         }
 
-        if(!coupon.getRegionId().equals(order.getRegionId())){
+        if (!coupon.getRegionId().equals(order.getRegionId())) {
             throw new Exception("使用区域不同!");
         }
 
-        if(!coupon.getUserId().equals(order.getUserId())){
+        if (!coupon.getUserId().equals(order.getUserId())) {
             throw new Exception("优惠券所属错误!");
         }
 
@@ -99,14 +99,15 @@ public class UserCouponService extends BaseService<Coupon> {
         CouponTicket couponTicket = couponTicketService.findById(coupon.getCouponId());
         switch (couponTicket.couponType()) {
             case FREE_ORDER:
-                order.setShouldPay(0);
+                order.setShouldPay(1);
                 break;
             case MINUS_PRICE:
                 order.setShouldPay(order.getOriginalPrice() - couponTicket.getVal());
                 break;
             case FULL_DISCOUNT:
                 int max = Math.min(order.getOriginalPrice() * couponTicket.getVal() / 100, couponTicket.getDiscountLimit());
-                order.setShouldPay(order.getOriginalPrice() - max);
+                int res = order.getOriginalPrice() - max;
+                order.setShouldPay(res > 0 ? res : 1);
         }
     }
 

@@ -5,12 +5,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import site.binghai.store.config.IceConfig;
-import site.binghai.store.entity.FruitTakeOut;
-import site.binghai.store.entity.Manager;
-import site.binghai.store.entity.UnifiedOrder;
-import site.binghai.store.entity.UserAddress;
+import site.binghai.store.entity.*;
 import site.binghai.store.enums.OrderStatusEnum;
 import site.binghai.store.enums.PayBizEnum;
+import site.binghai.store.enums.TakeOutStatusEnum;
 import site.binghai.store.service.*;
 import site.binghai.store.tools.MD5;
 import site.binghai.store.tools.TimeTools;
@@ -35,6 +33,8 @@ public class AfterPay extends BaseController {
     private FruitTakeOutService fruitTakeOutService;
     @Autowired
     private AddressService addressService;
+    @Autowired
+    private ExpressOrderService expressOrderService;
 
     /**
      * orderKey = orderId
@@ -63,10 +63,16 @@ public class AfterPay extends BaseController {
 
         switch (PayBizEnum.valueOf(order.getAppCode())) {
             case EXPRESS:
+                ExpressOrder expressOrder = expressOrderService.findByUnifiedId(order.getId());
+                expressOrder.setHasPay(true);
+                expressOrderService.update(expressOrder);
                 managerService.findByRegionId(order.getRegionId())
                         .forEach(v -> payExpressSuccess(v, order));
                 break;
             case FRUIT_TAKE_OUT:
+                FruitTakeOut out = fruitTakeOutService.findByUnifiedId(order.getId());
+                out.setTakeOutStatus(TakeOutStatusEnum.PRODUCTING.getCode());
+                fruitTakeOutService.update(out);
                 managerService.findByRegionId(order.getRegionId())
                         .forEach(v -> payFruitOrderSuccess(v, order));
                 break;
