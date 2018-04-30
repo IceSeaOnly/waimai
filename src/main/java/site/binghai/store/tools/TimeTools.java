@@ -17,15 +17,17 @@ public class TimeTools {
         return System.currentTimeMillis();
     }
 
-    public static int currentSecond(){
-        return Long.valueOf(currentTS()/1000).intValue();
+    public static int currentSecond() {
+        return Long.valueOf(currentTS() / 1000).intValue();
     }
 
     public static String format(Long date) {
         try {
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             return df.format(date);
-        }catch (Exception e){e.printStackTrace();}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         return "NULL";
     }
@@ -152,5 +154,9 @@ public class TimeTools {
         long start = dataTime2Timestamp(now.substring(0, idx) + ":00");
         long end = dataTime2Timestamp(now.substring(0, idx) + ":59");
         return new Long[]{start, end};
+    }
+
+    public static String now() {
+        return format(currentTS());
     }
 }

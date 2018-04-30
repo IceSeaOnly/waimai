@@ -32,7 +32,7 @@ public class UnifiedOrder extends BaseEntity {
     private Long regionId; // 区域id，即一级类目categoryId
 
     public UnifiedOrder() {
-        orderId = UUID.randomUUID().toString();
+        orderId = UUID.randomUUID().toString().substring(9);
         status = OrderStatusEnum.CREATED.getCode();
     }
 

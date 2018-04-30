@@ -135,4 +135,41 @@ public class ExpressController extends BaseController {
         map.put("detail", sb.toString());
         return "confirmExpressOrder";
     }
+
+    /**
+     * 管理员访问路径
+     * */
+    @GetMapping("orderDetail")
+    public String unifiedOrderDetail(@RequestParam Long unifiedId, @RequestParam String openid, ModelMap map) {
+        if (!openid.equals(getUser().getOpenId())) {
+            return commonResp("无权查看", "对不起,您无权查看此信息", "好的", "/user/index", map);
+        }
+
+        ExpressOrder order = expressOrderService.findByUnifiedId(unifiedId);
+        if (order == null) {
+            return commonResp("非法参数", "非法参数", "好的", "/user/Index", map);
+        }
+        UnifiedOrder unifiedOrder = unifiedOrderService.findById(order.getUnifiedId());
+        int type = order.getType();
+        StringBuilder sb = new StringBuilder();
+
+        map.put("title", type == 0 ? "寄快递" : "取快递");
+        if (type == 0) {
+            sb.append("寄件人:" + order.getFrom() + "</br>");
+            sb.append("寄件人手机:" + order.getFromPhone() + "</br>");
+            sb.append("收件人:" + order.getFrom() + "</br>");
+            sb.append("寄件人手机:" + order.getFromPhone() + "</br>");
+            sb.append("寄件地址:" + order.getToWhere() + "</br>");
+            sb.append("内容物:" + order.getWhatIs() + "</br>");
+        } else {
+            sb.append("收件人:" + order.getFrom() + "</br>");
+            sb.append("电话:" + order.getFromPhone() + "</br>");
+            sb.append("短信内容:" + order.getSms() + "</br>");
+        }
+
+        map.put("uorder", unifiedOrder);
+        map.put("order", order);
+        map.put("detail", sb.toString());
+        return "confirmExpressOrder";
+    }
 }

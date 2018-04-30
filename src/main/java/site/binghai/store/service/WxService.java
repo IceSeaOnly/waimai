@@ -17,6 +17,7 @@ import site.binghai.store.tools.TimeTools;
 public class WxService extends BaseBean {
     private static final String accUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s";
     private static final String userInfo = "https://api.weixin.qq.com/cgi-bin/user/info?access_token=%s&openid=%s&lang=zh_CN";
+    private static final String tplMessage = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s";
     @Autowired
     private IceConfig iceConfig;
 
@@ -61,5 +62,25 @@ public class WxService extends BaseBean {
 
         logger.error("get userInfo error,{},openId:{}", res, openId);
         return null;
+    }
+
+    /***
+     * 模板消息
+     * */
+
+    public void tplMessage(String tpl, JSONObject data, String openId, String toUrl) {
+        JSONObject post = newJSONObject();
+        post.put("touser", openId);
+        post.put("template_id", tpl);
+        post.put("url", toUrl == null ? "" : toUrl);
+        post.put("data", data);
+        String url = String.format(tplMessage, getAccessToken());
+        JSONObject res = HttpUtils.sendJSONPost(url, null, post.toJSONString());
+
+        if (res != null && res.getInteger("errcode") == 0) {
+            logger.info("send tpl message success! message body: {}", post);
+        } else {
+            logger.error("send tpl message failed. message body:{},error:{}", post, res);
+        }
     }
 }

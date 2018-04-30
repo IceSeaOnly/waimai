@@ -6,6 +6,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -148,6 +149,32 @@ public class UserOrderController extends BaseController {
 
         UserAddress address = addressService.getUserAddress(getUser().getId());
 
+        map.put("order", fruitTakeOut);
+        map.put("uorder", unifiedOrder);
+        map.put("addressMiss", address == null ? true : false);
+        map.put("address", address);
+        map.put("couponInfo", unifiedOrder.getCouponId() == null ? "未使用优惠券" : "已使用优惠券");
+        map.put("conponPrice", (unifiedOrder.getOriginalPrice() - unifiedOrder.getShouldPay()) / 100.0); // 优惠金额
+
+        return "userConfirmOrder";
+    }
+
+    /**
+     * 管理员访问路径
+     * */
+    @RequestMapping("fruitOrderDetail")
+    public String fruitOrderDetail(@RequestParam Long unifiedId, @RequestParam String openid, ModelMap map) {
+        if (!openid.equals(getUser().getOpenId())) {
+            return commonResp("无权查看", "对不起,您无权查看此信息", "好的", "/user/index", map);
+        }
+
+        FruitTakeOut fruitTakeOut = fruitTakeOutService.findByUnifiedId(unifiedId);
+
+        if (fruitTakeOut == null) {
+            return commonResp("参数有误", "订单不存在", "返回主页", "/user/index", map);
+        }
+        UnifiedOrder unifiedOrder = unifiedOrderService.findById(fruitTakeOut.getUnifiedOrderId());
+        UserAddress address = addressService.getUserAddress(getUser().getId());
         map.put("order", fruitTakeOut);
         map.put("uorder", unifiedOrder);
         map.put("addressMiss", address == null ? true : false);

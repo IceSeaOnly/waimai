@@ -21,4 +21,18 @@ public class IceConfig {
     private String appSecret;
     private String wmLogin;
     private String server;
+
+    // 退款申请通过模板 OPENTM401747701
+    private String refundRequestAcceptedTpl;
+    // 外卖订单提醒模板 OPENTM407360983
+    private String takeOutOrderTpl;
+    // 新订单通知 OPENTM208036452
+    private String newOrderNoticeTpl;
+    // 退款处理提醒 OPENTM409398653
+    private String refuntRequestNoticeTpl;
+    // 支付成功通知 OPENTM400231951
+    private String paySuccessTpl;
+    // 订单取消通知 TM00850
+    private String orderCanceledNotice;
+
 }

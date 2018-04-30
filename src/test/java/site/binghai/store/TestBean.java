@@ -10,6 +10,7 @@ import site.binghai.store.tools.IoUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by IceSea on 2018/4/8.
@@ -74,5 +75,11 @@ public class TestBean {
     @Test
     public void name() throws Exception {
         System.out.println(HttpUtils.sendGet("http://sd.122.gov.cn/m/examplan/getStudentInfo?page=0&xh=370218040482586",null));
+    }
+
+    @Test
+    public void uuid() throws Exception {
+        System.out.println(UUID.randomUUID().toString().length());
+        System.out.println(UUID.randomUUID().toString().substring(9).length());
     }
 }
