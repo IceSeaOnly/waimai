@@ -22,6 +22,8 @@ public class IceConfig {
     private String wmLogin;
     private String server;
     private String payServer;
+    private String refundServer;
+    private String refundSecret;
 
     // 退款申请通过模板 OPENTM401747701
     private String refundRequestAcceptedTpl;

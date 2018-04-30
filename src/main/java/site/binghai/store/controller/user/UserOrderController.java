@@ -16,6 +16,7 @@ import site.binghai.store.enums.OrderStatusEnum;
 import site.binghai.store.enums.PayBizEnum;
 import site.binghai.store.enums.TakeOutStatusEnum;
 import site.binghai.store.service.*;
+import site.binghai.store.tools.TplGenerator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,6 +42,10 @@ public class UserOrderController extends BaseController {
     private AddressService addressService;
     @Autowired
     private IceConfig iceConfig;
+    @Autowired
+    private WxService wxService;
+    @Autowired
+    private ManagerService managerService;
 
     /**
      * 前往购物页面
@@ -226,7 +231,22 @@ public class UserOrderController extends BaseController {
             out.setTakeOutStatus(TakeOutStatusEnum.MANAGAER_DOING.getCode());
             fruitTakeOutService.update(out);
         }
-        //todo 退款操作
+
+        refundRequest(order);
         return commonResp("退款流程已发起", "退款流程已发起，待管理员审核，取消后将退款、退还优惠券", "返回", "/user/orderList", map);
+    }
+
+    private void refundRequest(UnifiedOrder order) {
+        managerService.findByRegionId(order.getRegionId())
+                .forEach(v ->
+                        wxService.tplMessage(iceConfig.getRefuntRequestNoticeTpl(), TplGenerator.getInstance()
+                                .put("first", order.getTitle() + "订单申请退款，请尽快处理!")
+                                .put("keyword1", order.getShouldPay() / 100.0 + "元")
+                                .put("keyword2", order.getTitle())
+                                .put("keyword3", order.getOrderId())
+                                .put("remark", "申请已提交，请操作拒绝或通过！")
+                                .getAll(), v.getOpenId(), "")
+
+                );
     }
 }

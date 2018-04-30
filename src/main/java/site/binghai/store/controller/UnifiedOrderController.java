@@ -6,12 +6,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import site.binghai.store.config.IceConfig;
+import site.binghai.store.entity.FruitTakeOut;
 import site.binghai.store.entity.UnifiedOrder;
 import site.binghai.store.enums.OrderStatusEnum;
 import site.binghai.store.enums.PayBizEnum;
+import site.binghai.store.enums.TakeOutStatusEnum;
 import site.binghai.store.service.ExpressOrderService;
 import site.binghai.store.service.FruitTakeOutService;
 import site.binghai.store.service.UnifiedOrderService;
+import site.binghai.store.service.WxService;
+import site.binghai.store.tools.HttpUtils;
+import site.binghai.store.tools.MD5;
+import site.binghai.store.tools.TimeTools;
+import site.binghai.store.tools.TplGenerator;
 
 import java.util.List;
 
@@ -29,6 +37,10 @@ public class UnifiedOrderController extends BaseController {
     private FruitTakeOutService fruitTakeOutService;
     @Autowired
     private ExpressOrderService expressOrderService;
+    @Autowired
+    private WxService wxService;
+    @Autowired
+    private IceConfig iceConfig;
 
     /**
      * currentCategory: {@OrderStatusEnum}
@@ -66,6 +78,128 @@ public class UnifiedOrderController extends BaseController {
     }
 
     /**
+     * 接单
+     */
+    @RequestMapping("accept")
+    public Object accept(@RequestParam Long id) {
+        UnifiedOrder order = unifiedOrderService.findById(id);
+        logger.info("{} 已接单 {}", getAdmin(), order);
+        order.setStatus(OrderStatusEnum.PROCESSING.getCode());
+        unifiedOrderService.update(order);
+        switch (PayBizEnum.valueOf(order.getAppCode())) {
+            case FRUIT_TAKE_OUT:
+                FruitTakeOut out = fruitTakeOutService.findByUnifiedId(id);
+                out.setTakeOutStatus(TakeOutStatusEnum.PRODUCTING.getCode());
+                fruitTakeOutService.update(out);
+                break;
+        }
+        return success();
+    }
+
+    /**
+     * 取消并退款
+     */
+    @RequestMapping("cancel")
+    public Object cancel(@RequestParam Long id) {
+        UnifiedOrder order = unifiedOrderService.findById(id);
+        logger.info("{} 已取消 {}", getAdmin(), order);
+        refund(id);
+        order.setStatus(OrderStatusEnum.CANCELED_REFUNDED.getCode());
+        unifiedOrderService.update(order);
+        switch (PayBizEnum.valueOf(order.getAppCode())) {
+            case FRUIT_TAKE_OUT:
+                FruitTakeOut out = fruitTakeOutService.findByUnifiedId(id);
+                out.setTakeOutStatus(TakeOutStatusEnum.ENDED.getCode());
+                fruitTakeOutService.update(out);
+                break;
+        }
+        return success();
+    }
+
+    /**
+     * done
+     */
+    @RequestMapping("done")
+    public Object done(@RequestParam Long id) {
+        UnifiedOrder order = unifiedOrderService.findById(id);
+        logger.info("{} 已完成 {}", getAdmin(), order);
+        refund(id);
+        order.setStatus(OrderStatusEnum.COMPLETE.getCode());
+        unifiedOrderService.update(order);
+        switch (PayBizEnum.valueOf(order.getAppCode())) {
+            case FRUIT_TAKE_OUT:
+                FruitTakeOut out = fruitTakeOutService.findByUnifiedId(id);
+                out.setTakeOutStatus(TakeOutStatusEnum.ENDED.getCode());
+                fruitTakeOutService.update(out);
+                break;
+        }
+        return success();
+    }
+
+    /**
+     * refund
+     */
+    @RequestMapping("refund")
+    public Object refund(@RequestParam Long id) {
+        UnifiedOrder order = unifiedOrderService.findById(id);
+        refundOpt(order);
+        logger.info("{} 已退款 {}", getAdmin(), order);
+        order.setStatus(OrderStatusEnum.CANCELED_REFUNDED.getCode());
+        unifiedOrderService.update(order);
+        switch (PayBizEnum.valueOf(order.getAppCode())) {
+            case FRUIT_TAKE_OUT:
+                FruitTakeOut out = fruitTakeOutService.findByUnifiedId(id);
+                out.setTakeOutStatus(TakeOutStatusEnum.ENDED.getCode());
+                fruitTakeOutService.update(out);
+                break;
+        }
+
+        wxService.tplMessage(iceConfig.getRefundRequestAcceptedTpl(), TplGenerator.getInstance()
+                .put("first", "您申请的退款已经完成")
+                .put("keyword1", order.getShouldPay() / 100.0 + "元")
+                .put("keyword2", order.getTitle())
+                .put("keyword3", order.getOrderId())
+                .put("remark", "期待您的再次光临!")
+                .getAll(), order.getOpenId(), "");
+        return success();
+    }
+
+    private void refundOpt(UnifiedOrder order) {
+        String validate = MD5.encryption(order.getOrderId() + iceConfig.getRefundSecret() + order.getShouldPay());
+        String res = HttpUtils.sendGet(iceConfig.getRefundServer(), "out_trade_no=" + order.getOrderId() + "&refund_fee=" + order.getShouldPay() + "&validate=" + validate);
+        logger.warn("refund message:{} ,order:{}", res, order);
+    }
+
+    /**
+     * refuseRefund
+     */
+    @RequestMapping("refuseRefund")
+    public Object refuseRefund(@RequestParam Long id) {
+        UnifiedOrder order = unifiedOrderService.findById(id);
+        logger.info("{} 已拒绝退款 {}", getAdmin(), order);
+        order.setStatus(OrderStatusEnum.COMPLETE.getCode());
+        unifiedOrderService.update(order);
+        switch (PayBizEnum.valueOf(order.getAppCode())) {
+            case FRUIT_TAKE_OUT:
+                FruitTakeOut out = fruitTakeOutService.findByUnifiedId(id);
+                out.setTakeOutStatus(TakeOutStatusEnum.ENDED.getCode());
+                fruitTakeOutService.update(out);
+                break;
+        }
+
+        wxService.tplMessage(iceConfig.getRefundRequestAcceptedTpl(), TplGenerator.getInstance()
+                .put("first", "很抱歉,您申请的退款没有通过！")
+                .put("keyword3", order.getShouldPay() / 100.0 + "元")
+                .put("keyword4", "管理员拒绝操作")
+                .put("keyword2", TimeTools.now())
+                .put("keyword1", order.getOrderId())
+                .put("remark", "期待您的再次光临!")
+                .getAll(), order.getOpenId(), "");
+        return success();
+    }
+
+
+    /**
      * 传入该订单的操作按钮
      */
     private JSONArray buildOperations(UnifiedOrder order) {
@@ -77,13 +211,16 @@ public class UnifiedOrderController extends BaseController {
             case PAYING:
                 break;
             case PAIED:
-            case PROCESSING:
-            case COMPLETE:
                 arr.add(buildButtonOperation("/admin/uo/accept", "接单", true));
                 arr.add(buildButtonOperation("/admin/uo/cancel", "取消", false));
                 break;
+            case PROCESSING:
+                arr.add(buildButtonOperation("/admin/uo/done", "完成", true));
+            case COMPLETE:
+                break;
             case REFUNDING:
-                arr.add(buildButtonOperation("/admin/uo/refund", "同意退款", true));
+                arr.add(buildButtonOperation("/admin/uo/refund", "拒绝", false));
+                arr.add(buildButtonOperation("/admin/uo/refuseRefund", "同意", true));
                 break;
             default:
                 break;
