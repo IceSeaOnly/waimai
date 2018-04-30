@@ -37,9 +37,9 @@ public class ExpressOrderTask extends BaseBean {
     @Scheduled(cron = "0 0/5 * * * ?")
     public void start() {
         logger.info("ExpressOrderTask start.");
-        List<ExpressOrder> ls = expressOrderService.findByPayState(Boolean.FALSE);
-        ls.forEach(v->{
-            if(TimeTools.currentTS() - v.getCreated() > 60000*30){
+        List<ExpressOrder> ls = expressOrderService.findByPayStateAndCanceled(Boolean.FALSE, Boolean.FALSE);
+        ls.forEach(v -> {
+            if (TimeTools.currentTS() - v.getCreated() > 60000 * 30) {
                 v.setCanceled(true);
                 expressOrderService.update(v);
 
@@ -50,13 +50,13 @@ public class ExpressOrderTask extends BaseBean {
                 userCouponService.rollBackCoupon(unifiedOrder);
 
                 wxService.tplMessage(iceConfig.getOrderCanceledNotice(), TplGenerator.getInstance()
-                        .put("first","您的"+unifiedOrder.getTitle()+"订单已取消")
-                        .put("orderProductPrice",unifiedOrder.getShouldPay()/100.0+"元")
-                        .put("orderProductName",unifiedOrder.getTitle())
-                        .put("orderAddress","请进入详情查看")
-                        .put("orderName",unifiedOrder.getOrderId())
-                        .put("remark","欢迎您的再次光临")
-                        .getAll(),unifiedOrder.getOpenId(),iceConfig.getServer()+"/user/confirmExpressOrder?unifiedId="+unifiedOrder.getId());
+                        .put("first", "您的" + unifiedOrder.getTitle() + "订单已取消")
+                        .put("orderProductPrice", unifiedOrder.getShouldPay() / 100.0 + "元")
+                        .put("orderProductName", unifiedOrder.getTitle())
+                        .put("orderAddress", "请进入详情查看")
+                        .put("orderName", unifiedOrder.getOrderId())
+                        .put("remark", "欢迎您的再次光临")
+                        .getAll(), unifiedOrder.getOpenId(), iceConfig.getServer() + "/user/confirmExpressOrder?unifiedId=" + unifiedOrder.getId());
             }
         });
     }

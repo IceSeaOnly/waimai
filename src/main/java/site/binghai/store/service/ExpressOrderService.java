@@ -29,8 +29,11 @@ public class ExpressOrderService extends BaseService<ExpressOrder> {
         return expressDao.findAllByUserIdOrderByIdDesc(user.getId());
     }
 
-    public List<ExpressOrder> findByPayState(Boolean paied) {
-        return expressDao.findByHasPay(paied);
+    public List<ExpressOrder> findByPayStateAndCanceled(Boolean paied,Boolean canceled) {
+        ExpressOrder order = new ExpressOrder();
+        order.setHasPay(false);
+        order.setCanceled(false);
+        return query(order);
     }
 
     public ExpressOrder findByUnifiedId(Long unifiedId) {
