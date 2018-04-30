@@ -221,8 +221,8 @@ public class UnifiedOrderController extends BaseController {
             case COMPLETE:
                 break;
             case REFUNDING:
-                arr.add(buildButtonOperation("/admin/uo/refund", "拒绝", false));
-                arr.add(buildButtonOperation("/admin/uo/refuseRefund", "同意", true));
+                arr.add(buildButtonOperation("/admin/uo/refuseRefund", "拒绝", false));
+                arr.add(buildButtonOperation("/admin/uo/refund", "同意", true));
                 break;
             default:
                 break;
