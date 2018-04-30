@@ -62,6 +62,7 @@
         $.get('/user/indexScript',function (data) {
             console.log(data);
             $("#innerHtml").html(data);
+            $.refreshScroller();
         })
     });
 </script>
