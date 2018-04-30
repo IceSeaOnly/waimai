@@ -95,6 +95,8 @@ public abstract class BaseService<T extends BaseEntity> extends BaseBean {
     }
 
     public List<T> query(T example) {
+        example.setCreated(null);
+        example.setCreatedTime(null);
         Example<T> ex = Example.of(example);
         return getDao().findAll(ex);
     }
