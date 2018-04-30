@@ -166,7 +166,9 @@ public class UnifiedOrderController extends BaseController {
 
     private void refundOpt(UnifiedOrder order) {
         String validate = MD5.encryption(order.getOrderId() + iceConfig.getRefundSecret() + order.getShouldPay());
-        String res = HttpUtils.sendGet(iceConfig.getRefundServer(), "out_trade_no=" + order.getOrderId() + "&refund_fee=" + order.getShouldPay() + "&validate=" + validate);
+        String url = iceConfig.getRefundServer() + "out_trade_no=" + order.getOrderId() + "&refund_fee=" + order.getShouldPay() + "&validate=" + validate;
+        String res = HttpUtils.sendGet(url, null);
+        logger.warn("refund url:", url);
         logger.warn("refund message:{} ,order:{}", res, order);
     }
 
