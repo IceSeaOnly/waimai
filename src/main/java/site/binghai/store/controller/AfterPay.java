@@ -50,7 +50,7 @@ public class AfterPay extends BaseController {
         if (!MD5.encryption(order.getOpenId()).equals(validate)) {
             return fail("validate failed!");
         }
-        if (OrderStatusEnum.valueOf(order.getStatus()) == OrderStatusEnum.PAIED) {
+        if (OrderStatusEnum.valueOf(order.getStatus()) != OrderStatusEnum.PAIED) {
             return fail("state not correct");
         }
 

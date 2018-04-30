@@ -3,6 +3,7 @@ package site.binghai.store.entity;
 
 import lombok.Data;
 import site.binghai.store.enums.CouponTypeEnum;
+import site.binghai.store.enums.PayBizEnum;
 import site.binghai.store.tools.TimeTools;
 
 import javax.persistence.Entity;
@@ -43,6 +44,10 @@ public class CouponTicket extends BaseEntity {
     @Override
     public Long getId() {
         return id;
+    }
+
+    public PayBizEnum payBizType() {
+        return PayBizEnum.valueOf(appCode);
     }
 
     public CouponTypeEnum couponType() {

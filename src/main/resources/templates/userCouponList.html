@@ -28,7 +28,7 @@
                         <p><font th:text="${cop.extra.getDescribe()}">最高20元</font><span th:text="${cop.extra.couponType().name}">立减券</span></p>
                     </div>
                     <div class="Couponbox-footer">
-                        <p th:text="${'仅供'+cop.extra.regionName}+'区域使用'"></p>
+                        <p th:text="${'仅供'+cop.extra.regionName+'区域'+cop.extra.payBizType().name+'使用'}"></p>
                         <p th:text="${'领取时间：'+cop.createdTime}">领取时间：2018-04-24 00:00:00</p>
                         <p>失效时间：<span th:text="${cop.extra.getAvailableTime()}">2015.07.08</span></p>
                     </div>
