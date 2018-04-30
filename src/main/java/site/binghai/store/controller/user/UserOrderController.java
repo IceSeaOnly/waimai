@@ -6,10 +6,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import site.binghai.store.config.IceConfig;
 import site.binghai.store.controller.BaseController;
 import site.binghai.store.entity.*;
 import site.binghai.store.enums.OrderStatusEnum;
@@ -39,6 +39,8 @@ public class UserOrderController extends BaseController {
     private CategoryService categoryService;
     @Autowired
     private AddressService addressService;
+    @Autowired
+    private IceConfig iceConfig;
 
     /**
      * 前往购物页面
@@ -161,7 +163,7 @@ public class UserOrderController extends BaseController {
 
     /**
      * 管理员访问路径
-     * */
+     */
     @RequestMapping("fruitOrderDetail")
     public String fruitOrderDetail(@RequestParam Long unifiedId, @RequestParam String openid, ModelMap map) {
         if (!openid.equals(getUser().getOpenId())) {
@@ -199,7 +201,11 @@ public class UserOrderController extends BaseController {
 
     @RequestMapping("goToPay")
     public String goToPay(@RequestParam Long unifiedId, ModelMap map) {
-        return commonResp("不可支付", "支付系统对接中...", "返回主页", "/user/index", map);
+        UnifiedOrder order = unifiedOrderService.findById(unifiedId);
+        if (order == null) {
+            return commonResp("不可支付", "参数错误!", "返回主页", "/user/index", map);
+        }
+        return "redirect:" + iceConfig.getPayServer() + "?orderid=" + order.getOrderId();
     }
 
     @RequestMapping("cancelOrder")

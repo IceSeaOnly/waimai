@@ -56,7 +56,7 @@ public class ExpressOrderTask extends BaseBean {
                         .put("orderAddress","请进入详情查看")
                         .put("orderName",unifiedOrder.getOrderId())
                         .put("remark","欢迎您的再次光临")
-                        .getAll(),unifiedOrder.getOpenId(),iceConfig+"/user/confirmExpressOrder?unifiedId="+unifiedOrder.getId());
+                        .getAll(),unifiedOrder.getOpenId(),iceConfig.getServer()+"/user/confirmExpressOrder?unifiedId="+unifiedOrder.getId());
             }
         });
     }

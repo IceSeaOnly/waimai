@@ -59,7 +59,7 @@ public class FruitOrderTask extends BaseBean {
                         .put("orderAddress","请进入详情查看")
                         .put("orderName",unifiedOrder.getOrderId())
                         .put("remark","欢迎您的再次光临")
-                        .getAll(),unifiedOrder.getOpenId(),iceConfig+"/user/confirmOrder?unifiedId="+unifiedOrder.getId());
+                        .getAll(),unifiedOrder.getOpenId(),iceConfig.getServer()+"/user/confirmOrder?unifiedId="+unifiedOrder.getId());
 
                 logger.info("order {},unifiedOrder {} has been cancelled because of out of date.", l.getId(), l.getUnifiedOrderId());
             }
