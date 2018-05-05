@@ -267,6 +267,10 @@ public class ExpressController extends BaseController {
         if (!isManager) {
             return commonResp("非法访问", "非法访问", "返回", "/user/index", map);
         }
+        order.setHasPay(Boolean.TRUE);
+        order.setPriceConfirmed(Boolean.TRUE);
+        expressOrderService.update(order);
+        unifiedOrder.setShouldPay(0);
         unifiedOrder.setStatus(OrderStatusEnum.PAIED.getCode());
         unifiedOrder.setOrderId("OFFLINE_" + TimeTools.currentTS());
         unifiedOrderService.update(unifiedOrder);
