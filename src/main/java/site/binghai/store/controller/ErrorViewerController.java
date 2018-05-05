@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @RequestMapping("/")
 @Controller
-public class ErrorHandler extends BaseController {
+public class ErrorViewerController extends BaseController {
     @RequestMapping("error")
     public String error(ModelMap map) {
         return commonResp("系统错误", "您的参数有误，系统无法识别", "返回主页", "/user/index", map);
