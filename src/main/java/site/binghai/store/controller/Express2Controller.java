@@ -17,8 +17,9 @@ public class Express2Controller extends BaseController {
     private ExpressOrderService expressOrderService;
 
     @GetMapping("findBy")
-    public Object findBy(@RequestParam Long id) {
-        return success(expressOrderService.findById(id), "SUCCESS");
+    public Object findBy() {
+        Long id = (Long) getSession().getAttribute("exoId");
+        return success(expressOrderService.findByUnifiedId(id), "SUCCESS");
     }
 
     @PostMapping("update")

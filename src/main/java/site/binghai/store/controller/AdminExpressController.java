@@ -1,10 +1,8 @@
 package site.binghai.store.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 import site.binghai.store.service.ExpressOrderService;
 
 import java.util.List;
@@ -15,7 +13,7 @@ import java.util.Map;
  * GitHub: https://github.com/IceSeaOnly
  */
 @RequestMapping("/admin/express/")
-@RestController
+@Controller
 public class AdminExpressController extends BaseController {
     @Autowired
     private ExpressOrderService expressOrderService;
@@ -23,6 +21,7 @@ public class AdminExpressController extends BaseController {
     /**
      * 仅列出支付成功的
      */
+    @ResponseBody
     @RequestMapping("list")
     public Object list(@RequestParam Integer page, @RequestParam Integer pageSize) {
         List ls = expressOrderService.findAllPaiedDescById(page, pageSize);
@@ -30,6 +29,7 @@ public class AdminExpressController extends BaseController {
     }
 
     @RequestMapping("update")
+    @ResponseBody
     public Object update(@RequestBody Map map) {
         try {
             expressOrderService.updateAndSave(getAdmin(), map);
@@ -39,5 +39,12 @@ public class AdminExpressController extends BaseController {
         }
 
         return success();
+    }
+
+
+    @GetMapping("edit")
+    public String redirect(@RequestParam Long id){
+        getSession().setAttribute("exoId",id);
+        return "redirect:/#/editExpress";
     }
 }
