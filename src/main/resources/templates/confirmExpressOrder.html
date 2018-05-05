@@ -44,19 +44,53 @@
                     <li class="item-content ">
                         <div class="item-inner">
                             <div class="item-title">订单金额</div>
-                            <div class="item-after" style="color: red" th:text="${uorder.shouldPayDouble()}">￥12</div>
+                            <div class="item-after" style="color: red"
+                                 th:text="${order.priceConfirmed?uorder.shouldPayDouble():'待确认'}">￥12
+                            </div>
                         </div>
                     </li>
-                    <li class="item-content ">
+                    <li class="item-content " th:if="${!order.priceConfirmed}">
                         <div class="item-inner">
                             <div class="item-title">状态</div>
-                            <div class="item-after" th:text="${order.hasPay?'已支付':(order.canceled?'已取消':'未支付')}">待支付</div>
+                            <div class="item-after">待确认</div>
+                        </div>
+                    </li>
+                    <li class="item-content " th:if="${order.priceConfirmed}">
+                        <div class="item-inner">
+                            <div class="item-title">状态</div>
+                            <div class="item-after" th:text="${order.hasPay?'已支付':(order.canceled?'已取消':'未支付')}">待支付
+                            </div>
                         </div>
                     </li>
                 </ul>
-                <div class="content-block" th:if="${!order.hasPay && !order.canceled}">
+
+                <div class="list-block" th:if="${adminTag && !order.priceConfirmed}">
+                    <form action="setPrice4ExpressOrder" method="post" id="setPriceForm">
+                        <ul>
+                            <li>
+                                <input type="hidden" name="id" th:value="${order.id}"/>
+                                <div class="item-content">
+                                    <div class="item-media"><i class="icon icon-form-name"></i></div>
+                                    <div class="item-inner">
+                                        <div class="item-title label">设定价格</div>
+                                        <div class="item-input">
+                                            <input type="text" name="setPrice">
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </form>
+                    <div class="content-block">
+                        <p><a onclick="$('#setPriceForm').submit()" class="button button-big">设定</a></p>
+                    </div>
+
+                </div>
+
+                <div class="content-block" th:if="${!order.hasPay && !order.canceled && order.priceConfirmed}">
                     <p><a th:href="${'/user/goToPay?unifiedId='+uorder.id}" class="button button-big">立即支付</a></p>
                 </div>
+
                 <div class="content-block-title">订单详细信息</div>
                 <div class="content-padded">
                     <p th:utext="${detail}"></p>

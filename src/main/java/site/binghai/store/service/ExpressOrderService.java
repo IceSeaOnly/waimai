@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import site.binghai.store.def.UnifiedOrderMethods;
 import site.binghai.store.entity.ExpressOrder;
 import site.binghai.store.entity.UnifiedOrder;
 import site.binghai.store.entity.User;
@@ -17,7 +18,7 @@ import java.util.List;
  * GitHub: https://github.com/IceSeaOnly
  */
 @Service
-public class ExpressOrderService extends BaseService<ExpressOrder> {
+public class ExpressOrderService extends BaseService<ExpressOrder> implements UnifiedOrderMethods {
     @Autowired
     private ExpressDao expressDao;
 

@@ -108,24 +108,52 @@
                                         </div>
                                     </div>
                                 </li>
+                                <!--<li>-->
+                                    <!--<div class="item-content">-->
+                                        <!--<div class="item-media"><i class="icon icon-form-name"></i></div>-->
+                                        <!--<div class="item-inner">-->
+                                            <!--<div class="item-title label">费用</div>-->
+                                            <!--<div class="item-input">-->
+                                                <!--<input type="text" name="fee" placeholder="请跟老板确认">-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                <!--</li>-->
                                 <li>
                                     <div class="item-content">
-                                        <div class="item-media"><i class="icon icon-form-name"></i></div>
+                                        <div class="item-media"><i class="icon icon-form-gender"></i></div>
                                         <div class="item-inner">
-                                            <div class="item-title label">费用</div>
+                                            <div class="item-title label">预约时间</div>
                                             <div class="item-input">
-                                                <input type="text" name="fee" placeholder="请跟老板确认">
+                                                <select name="bookPeriod">
+                                                    <option th:each="per:${deliver_periods}" th:text="${per.name}" th:value="${per.id}">上午 08:00~12:00</option>
+                                                </select>
                                             </div>
                                         </div>
                                     </div>
                                 </li>
-
-
+                                <li>
+                                    <div class="item-content">
+                                        <div class="item-media"><i class="icon icon-form-gender"></i></div>
+                                        <div class="item-inner">
+                                            <div class="item-title label">省市信息</div>
+                                            <div class="item-input">
+                                                <select onchange="vChange(this.value)" name="province">
+                                                    <option value="-1">请选择省份</option>
+                                                    <option th:each="province:${provinces}" th:value="${province.id}" th:text="${province.province}">上午 </option>
+                                                </select>
+                                                <select name="city" id="cityMaps" onchange="cityChange(this.value)">
+                                                    <option value="-1">请先选择省份</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
                                 <li class="align-top">
                                     <div class="item-content">
                                         <div class="item-media"><i class="icon icon-form-comment"></i></div>
                                         <div class="item-inner">
-                                            <div class="item-title label">寄送地址</div>
+                                            <div class="item-title label">详细地址</div>
                                             <div class="item-input">
                                                 <textarea name="toWhere"></textarea>
                                             </div>
@@ -134,6 +162,8 @@
                                 </li>
                             </ul>
                         </div>
+
+                        <p style="color: red" id="notice"></p>
 
                         <div class="content-block">
                             <p><a onclick="$('#newDelivery1').submit()" class="button button-big">提交订单</a></p>
@@ -169,7 +199,19 @@
                                         </div>
                                     </div>
                                 </li>
-
+                                <li>
+                                    <div class="item-content">
+                                        <div class="item-media"><i class="icon icon-form-gender"></i></div>
+                                        <div class="item-inner">
+                                            <div class="item-title label">预约配送</div>
+                                            <div class="item-input">
+                                                <select name="bookPeriod" th:name="bookPeriod">
+                                                    <option th:each="per:${deliver_periods}" th:text="${per.name}" th:value="${per.id}">上午 08:00~12:00</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
                                 <li class="align-top">
                                     <div class="item-content">
                                         <div class="item-media"><i class="icon icon-form-comment"></i></div>
@@ -177,6 +219,17 @@
                                             <div class="item-title label">通知短信</div>
                                             <div class="item-input">
                                                 <textarea name="sms" placeholder="此处粘贴通知短信"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="align-top">
+                                    <div class="item-content">
+                                        <div class="item-media"><i class="icon icon-form-comment"></i></div>
+                                        <div class="item-inner">
+                                            <div class="item-title label">配送地址</div>
+                                            <div class="item-input">
+                                                <textarea name="toWhere" placeholder="请填写详细配送地址"></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -218,6 +271,28 @@
 </div>
 <script>
     $.init();
+
+    function vChange(v){
+        if(v < 0){
+            $("#cityMaps").html('');
+            return;
+        }
+        $.getJSON('/user/getCityByProvince','id='+v,function (data) {
+            $("#cityMaps").html('');
+            for(item in data){
+                if(item == 0){
+                    cityChange(data[item].id);
+                }
+                $("#cityMaps").append("<option value='"+data[item].id+"'>"+data[item].city+"</option>")
+            }
+        })
+    }
+
+    function cityChange(v) {
+        $.getJSON('/user/getCity','id='+v,function (data) {
+            $("#notice").text('起送费'+data.fkg+',续重'+data.xkg+'/kg');
+        })
+    }
 </script>
 </body>
 </html>

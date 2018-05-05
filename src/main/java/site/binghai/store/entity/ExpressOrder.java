@@ -23,6 +23,7 @@ public class ExpressOrder extends BaseEntity {
     private Long unifiedId; // 统一订单号
     private Boolean hasPay; // 是否已经支付
     private Boolean canceled; // 是否已取消
+    private Boolean priceConfirmed; // 管理员设置了价格
     private Integer type; // 0 寄件,1 取件
 
     /**
@@ -43,6 +44,7 @@ public class ExpressOrder extends BaseEntity {
 
     @Column(columnDefinition = "TEXT")
     private String sms; // 取件时使用的短信内容
+    private String bookPeriod;
 
     private String exName; // 快递名
     private String exNo; // 快递单号

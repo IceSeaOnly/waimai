@@ -65,6 +65,15 @@ public class IndexController extends BaseController {
         return "userMemberInfo";
     }
 
+    /**
+     * 隐蔽信息
+     * */
+    @RequestMapping("goldKey4MyInfo")
+    public String goldKey4MyInfo(ModelMap map){
+        String info = String.format("我的ID:%s<br>我的OPENID:%s",getUser().getId(),getUser().getOpenId());
+        return commonResp("我的信息",info,"返回","/user/member",map);
+    }
+
     @RequestMapping(value = "updateMemberInfo", method = RequestMethod.POST)
     public String updateMemberInfo(@RequestParam String userName,
                                    @RequestParam String phone,

@@ -3,18 +3,17 @@ package site.binghai.store.controller.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import site.binghai.store.config.IceConfig;
 import site.binghai.store.controller.BaseController;
+import site.binghai.store.entity.City;
 import site.binghai.store.entity.ExpressOrder;
 import site.binghai.store.entity.RegionConfig;
 import site.binghai.store.entity.UnifiedOrder;
+import site.binghai.store.enums.BookingTypeEnum;
 import site.binghai.store.enums.PayBizEnum;
-import site.binghai.store.service.ExpressOrderService;
-import site.binghai.store.service.RegionConfigService;
-import site.binghai.store.service.UnifiedOrderService;
+import site.binghai.store.service.*;
+import site.binghai.store.tools.TplGenerator;
 
 import java.util.Arrays;
 
@@ -31,12 +30,36 @@ public class ExpressController extends BaseController {
     private ExpressOrderService expressOrderService;
     @Autowired
     private RegionConfigService regionConfigService;
+    @Autowired
+    private CityService cityService;
+    @Autowired
+    private WxService wxService;
+    @Autowired
+    private IceConfig iceConfig;
+    @Autowired
+    private BookPeriodService bookPeriodService;
 
     @RequestMapping("exIndex")
     public String index(ModelMap map) {
-        map.put("regionConfig",regionConfigService.findByRegionId(getUser().getRegionId()));
+        map.put("regionConfig", regionConfigService.findByRegionId(getUser().getRegionId()));
         map.put("orders", expressOrderService.findAllByUserId(getUser()));
+        map.put("deliver_periods", bookPeriodService.getPeriods(getUser().getRegionId(), BookingTypeEnum.DELIVER_EXPRESS));
+        map.put("fetch_periods", bookPeriodService.getPeriods(getUser().getRegionId(), BookingTypeEnum.FETCH_EXPRESS));
+        map.put("provinces", cityService.getAllProvince());
         return "expressBiz";
+    }
+
+    @RequestMapping("getCityByProvince")
+    @ResponseBody
+    public Object getCityByProvince(@RequestParam Long id) {
+        City city = cityService.findById(id);
+        return cityService.getByProvince(city.getProvince());
+    }
+
+    @RequestMapping("getCity")
+    @ResponseBody
+    public Object getCity(@RequestParam Long id) {
+        return cityService.findById(id);
     }
 
     @PostMapping("newDelivery")
@@ -44,15 +67,18 @@ public class ExpressController extends BaseController {
                               @RequestParam String toPhone,
                               @RequestParam String from,
                               @RequestParam String fromPhone,
-                              @RequestParam Double fee,
+//                              @RequestParam Double fee,
                               @RequestParam String toWhere,
                               @RequestParam String whatIs,
+                              @RequestParam Long bookPeriod,
+                              @RequestParam Long city,
                               ModelMap map
     ) {
         if (!noEmptyString(Arrays.asList(to, toPhone, from, fromPhone, toWhere))) {
             return commonResp("输入有误", "输入不正确，请确认输入完整", "好的", "/user/exIndex", map);
         }
 
+        double fee = 999999;
         if (fee <= 0) {
             return commonResp("价格有误", "请输入正确的价格", "好的", "/user/exIndex", map);
         }
@@ -60,6 +86,7 @@ public class ExpressController extends BaseController {
         UnifiedOrder unifiedOrder = unifiedOrderService.newOrder(PayBizEnum.EXPRESS, getUser(), "寄快递", Double.valueOf(fee * 100).intValue());
 
         ExpressOrder expressOrder = new ExpressOrder();
+        expressOrder.setPriceConfirmed(Boolean.FALSE);
         expressOrder.setUserName(getUser().getUserName());
         expressOrder.setUserId(getUser().getId());
         expressOrder.setHasPay(false);
@@ -70,8 +97,10 @@ public class ExpressController extends BaseController {
         expressOrder.setFrom(from);
         expressOrder.setFromPhone(fromPhone);
         expressOrder.setType(0);
-        expressOrder.setToWhere(toWhere);
+        City c = cityService.findById(city);
+        expressOrder.setToWhere(c.getProvince() + c.getCity() + toWhere);
         expressOrder.setWhatIs(whatIs);
+        expressOrder.setBookPeriod(bookPeriodService.findById(bookPeriod).getName());
 
         expressOrder = expressOrderService.save(expressOrder);
 
@@ -82,6 +111,8 @@ public class ExpressController extends BaseController {
     public String newFetchThing(@RequestParam String from,
                                 @RequestParam String fromPhone,
                                 @RequestParam String sms,
+                                @RequestParam String toWhere,
+                                @RequestParam Long bookPeriod,
                                 ModelMap map) {
         if (!noEmptyString(Arrays.asList(from, fromPhone, sms))) {
             return commonResp("输入有误", "输入不正确，请确认输入完整", "好的", "/user/exIndex", map);
@@ -90,6 +121,7 @@ public class ExpressController extends BaseController {
         UnifiedOrder unifiedOrder = unifiedOrderService.newOrder(PayBizEnum.EXPRESS, getUser(), "取快递", (config == null || config.getFetchFee() == null) ? 500 : config.getFetchFee());
 
         ExpressOrder expressOrder = new ExpressOrder();
+        expressOrder.setPriceConfirmed(Boolean.TRUE);
         expressOrder.setUserName(getUser().getUserName());
         expressOrder.setUserId(getUser().getId());
         expressOrder.setHasPay(false);
@@ -101,16 +133,38 @@ public class ExpressController extends BaseController {
         expressOrder.setFromPhone(fromPhone);
         expressOrder.setType(1);
         expressOrder.setSms(sms);
+        expressOrder.setToWhere(toWhere);
+        expressOrder.setBookPeriod(bookPeriodService.findById(bookPeriod).getName());
 
         expressOrder = expressOrderService.save(expressOrder);
         return "redirect:/user/confirmExpressOrder?unifiedId=" + expressOrder.getUnifiedId();
+    }
+
+    @PostMapping("setPrice4ExpressOrder")
+    public String setPrice4ExpressOrder(@RequestParam Long id, @RequestParam Double setPrice, ModelMap map) {
+        ExpressOrder order = expressOrderService.findById(id);
+        order.setPriceConfirmed(Boolean.TRUE);
+        UnifiedOrder unifiedOrder = unifiedOrderService.findById(order.getUnifiedId());
+        unifiedOrder.setShouldPay(Double.valueOf(setPrice * 100).intValue());
+        unifiedOrder.setOriginalPrice(unifiedOrder.getShouldPay());
+        unifiedOrderService.update(unifiedOrder);
+        expressOrderService.update(order);
+        wxService.tplMessage(iceConfig.getRequire2Pay(), TplGenerator.getInstance()
+                .put("first", "订单支付已确认,请继续支付")
+                .put("keyword1", unifiedOrder.getOrderId())
+                .put("keyword2", unifiedOrder.originalDoublePrice() + "元")
+                .put("keyword3", unifiedOrder.getCreatedTime())
+                .put("remark", "点击进入支付页")
+                .getAll(), unifiedOrder.getOpenId(), "/user/confirmExpressOrder?unifiedId=" + unifiedOrder.getId());
+
+        return commonResp("设定完毕", "请用户继续支付", "好的", "/user/index", map);
     }
 
     @GetMapping("confirmExpressOrder")
     public String confirmExpressOrder(@RequestParam Long unifiedId, ModelMap map) {
         ExpressOrder order = expressOrderService.findByUnifiedId(unifiedId);
         if (order == null || !order.getUserId().equals(getUser().getId())) {
-            return commonResp("非法参数", "非法参数", "好的", "/user/Index", map);
+            return commonResp("非法参数", "非法参数", "好的", "/user/index", map);
         }
         UnifiedOrder unifiedOrder = unifiedOrderService.findById(order.getUnifiedId());
         int type = order.getType();
@@ -118,27 +172,31 @@ public class ExpressController extends BaseController {
 
         map.put("title", type == 0 ? "寄快递" : "取快递");
         if (type == 0) {
-            sb.append("寄件人:" + order.getFrom() + "</br>");
-            sb.append("寄件人手机:" + order.getFromPhone() + "</br>");
-            sb.append("收件人:" + order.getFrom() + "</br>");
-            sb.append("寄件人手机:" + order.getFromPhone() + "</br>");
-            sb.append("寄件地址:" + order.getToWhere() + "</br>");
-            sb.append("内容物:" + order.getWhatIs() + "</br>");
+            sb.append("寄件人: " + order.getFrom() + "</br>");
+            sb.append(String.format("寄件人手机: <a href=\"tel:%s\">%s</a></br>", order.getFromPhone(), order.getFromPhone()));
+            sb.append("收件人 :" + order.getFrom() + "</br>");
+            sb.append(String.format("收件人手机: <a href=\"tel:%s\">%s</a></br>", order.getToPhone(), order.getToPhone()));
+            sb.append("寄件地址: " + order.getToWhere() + "</br>");
+            sb.append("预约时间: " + order.getBookPeriod() + "</br>");
+            sb.append("内容物: " + order.getWhatIs() + "</br>");
         } else {
-            sb.append("收件人:" + order.getFrom() + "</br>");
-            sb.append("电话:" + order.getFromPhone() + "</br>");
-            sb.append("短信内容:" + order.getSms() + "</br>");
+            sb.append("收件人: " + order.getFrom() + "</br>");
+            sb.append(String.format("收件手机: <a href=\"tel:%s\">%s</a></br>", order.getToPhone(), order.getToPhone()));
+            sb.append("短信内容: " + order.getSms() + "</br>");
+            sb.append("配送地址: " + order.getToWhere() + "</br>");
+            sb.append("预约时间: " + order.getBookPeriod() + "</br>");
         }
 
         map.put("uorder", unifiedOrder);
         map.put("order", order);
         map.put("detail", sb.toString());
+        map.put("adminTag", false);
         return "confirmExpressOrder";
     }
 
     /**
      * 管理员访问路径
-     * */
+     */
     @GetMapping("orderDetail")
     public String unifiedOrderDetail(@RequestParam Long unifiedId, @RequestParam String openid, ModelMap map) {
         if (!openid.equals(getUser().getOpenId())) {
@@ -156,20 +214,24 @@ public class ExpressController extends BaseController {
         map.put("title", type == 0 ? "寄快递" : "取快递");
         if (type == 0) {
             sb.append("寄件人:" + order.getFrom() + "</br>");
-            sb.append("寄件人手机:" + order.getFromPhone() + "</br>");
+            sb.append(String.format("寄件人手机:<a href=\"tel:%s\">%s</a></br>", order.getFromPhone(), order.getFromPhone()));
             sb.append("收件人:" + order.getFrom() + "</br>");
-            sb.append("寄件人手机:" + order.getFromPhone() + "</br>");
+            sb.append(String.format("收件人手机:<a href=\"tel:%s\">%s</a></br>", order.getToPhone(), order.getToPhone()));
             sb.append("寄件地址:" + order.getToWhere() + "</br>");
+            sb.append("预约时间:" + order.getBookPeriod() + "</br>");
             sb.append("内容物:" + order.getWhatIs() + "</br>");
         } else {
             sb.append("收件人:" + order.getFrom() + "</br>");
-            sb.append("电话:" + order.getFromPhone() + "</br>");
+            sb.append(String.format("收件手机:<a href=\"tel:%s\">%s</a></br>", order.getToPhone(), order.getToPhone()));
             sb.append("短信内容:" + order.getSms() + "</br>");
+            sb.append("配送地址:" + order.getToWhere() + "</br>");
+            sb.append("预约时间:" + order.getBookPeriod() + "</br>");
         }
 
         map.put("uorder", unifiedOrder);
         map.put("order", order);
         map.put("detail", sb.toString());
+        map.put("adminTag", true);
         return "confirmExpressOrder";
     }
 }

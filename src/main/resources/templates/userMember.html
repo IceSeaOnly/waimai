@@ -48,7 +48,7 @@
         </nav>
         <div class="member-header">
             <p></p>
-            <div class="memberhead"><img th:src="${session.user.avatar}" alt=""><i class="icon-woman"></i></div>
+            <div class="memberhead" onclick="imgPress()"><img th:src="${session.user.avatar}" alt=""><i class="icon-woman"></i></div>
 
             <div class="waves1 icon-waves"></div>
             <div class="waves2 icon-waves"></div>
@@ -76,6 +76,17 @@
 
     <script>
         $.init();
+
+        var pressCount = 0;
+        function imgPress(){
+            if(pressCount < 5){
+                pressCount++;
+                console.log('pressCount:'+pressCount);
+                return;
+            }
+            window.location.href='/user/goldKey4MyInfo'
+            pressCount=0;
+        }
     </script>
 </body>
 </html>

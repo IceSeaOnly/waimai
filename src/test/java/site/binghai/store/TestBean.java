@@ -8,8 +8,11 @@ import site.binghai.store.entity.TradeItem;
 import site.binghai.store.tools.HttpUtils;
 import site.binghai.store.tools.IoUtils;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.UUID;
 
 /**
@@ -81,5 +84,27 @@ public class TestBean {
     public void uuid() throws Exception {
         System.out.println(UUID.randomUUID().toString().length());
         System.out.println(UUID.randomUUID().toString().substring(9).length());
+    }
+
+    @Test
+    public void citySql(){
+        try {
+            Scanner scanner = new Scanner(new FileInputStream("FeHelper-20180502222058.json"));
+            StringBuilder sb = new StringBuilder();
+            while (scanner.hasNextLine()){
+                sb.append(scanner.nextLine().trim());
+            }
+            scanner.close();
+            JSONArray array = JSONObject.parseObject(sb.toString()).getJSONArray("provinces");
+            for (int i = 0; i < array.size(); i++) {
+                String provinceName = array.getJSONObject(i).getString("provinceName");
+                JSONArray citys = array.getJSONObject(i).getJSONArray("citys");
+                for (int j = 0; j < citys.size(); j++) {
+                    System.out.println(String.format("insert into city(province,city) values('%s','%s');",provinceName,citys.getJSONObject(j).getString("citysName")));
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }
