@@ -83,7 +83,7 @@
                     </form>
                     <div class="content-block">
                         <p><a onclick="$('#setPriceForm').submit()" class="button button-big">设定</a></p>
-                        <p><a th:onclick="${'confirmOfflinePay('+order.id+')'}" class="button button-big button-warning">确认线下支付</a></p>
+                        <p><a th:href="${'javascript:confirmOfflinePay('+order.id+')'}" class="button button-big button-warning">确认线下支付</a></p>
                     </div>
 
                 </div>
