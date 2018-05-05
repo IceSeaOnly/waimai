@@ -216,8 +216,16 @@ public class UnifiedOrderController extends BaseController {
                 arr.add(buildButtonOperation("/admin/uo/cancel", "取消", false));
                 break;
             case PROCESSING:
+                if(order.getAppCode().equals(PayBizEnum.EXPRESS.getCode())){
+                    getSession().setAttribute("unifiedId",order.getId());
+                    arr.add(buildButtonOperation("#editExpress","编辑",false));
+                }
                 arr.add(buildButtonOperation("/admin/uo/done", "完成", true));
             case COMPLETE:
+                if(order.getAppCode().equals(PayBizEnum.EXPRESS.getCode())){
+                    getSession().setAttribute("unifiedId",order.getId());
+                    arr.add(buildButtonOperation("#editExpress","编辑",false));
+                }
                 break;
             case REFUNDING:
                 arr.add(buildButtonOperation("/admin/uo/refuseRefund", "拒绝", false));

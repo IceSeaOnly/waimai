@@ -239,6 +239,8 @@ public class ExpressController extends BaseController {
             sb.append("寄件地址:" + order.getToWhere() + "</br>");
             sb.append("预约时间:" + order.getBookPeriod() + "</br>");
             sb.append("内容物:" + order.getWhatIs() + "</br>");
+            sb.append("快递名:" + order.getExName() + "</br>");
+            sb.append("快递单号:" + order.getExNo() + "</br>");
         } else {
             sb.append("收件人:" + order.getFrom() + "</br>");
             sb.append(String.format("收件手机:<a href=\"tel:%s\">%s</a></br>", order.getToPhone(), order.getToPhone()));
@@ -275,6 +277,6 @@ public class ExpressController extends BaseController {
         unifiedOrder.setOrderId("OFFLINE_" + TimeTools.currentTS());
         unifiedOrderService.update(unifiedOrder);
         afterPay.afterPay(unifiedOrder.getOrderId(), MD5.encryption(unifiedOrder.getOpenId()));
-        return commonResp("设定完毕", "请用户继续支付", "好的", "/user/index", map);
+        return commonResp("设定完毕", "已确认线下支付", "好的", "/user/index", map);
     }
 }
