@@ -123,7 +123,6 @@ public class UnifiedOrderController extends BaseController {
     public Object done(@RequestParam Long id) {
         UnifiedOrder order = unifiedOrderService.findById(id);
         logger.info("{} 已完成 {}", getAdmin(), order);
-        refund(id);
         order.setStatus(OrderStatusEnum.COMPLETE.getCode());
         unifiedOrderService.update(order);
         switch (PayBizEnum.valueOf(order.getAppCode())) {

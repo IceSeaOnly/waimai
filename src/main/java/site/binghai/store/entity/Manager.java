@@ -16,6 +16,7 @@ public class Manager extends BaseEntity {
     @Id
     @GeneratedValue
     private Long id;
+    private String name;
     private String openId;
     private Long regionId;
     private Long userId;
