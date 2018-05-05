@@ -22,8 +22,8 @@ public class ManagerController extends BaseController {
     private ManagerService managerService;
 
     @GetMapping("list")
-    public Object list(@RequestParam Long regionId) {
-        return success(managerService.findByRegionId(regionId), "SUCCESS");
+    public Object list() {
+        return success(managerService.findAll(9999), "SUCCESS");
     }
 
     @GetMapping("delete")
