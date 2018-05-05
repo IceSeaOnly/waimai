@@ -205,7 +205,7 @@
                                         <div class="item-inner">
                                             <div class="item-title label">预约配送</div>
                                             <div class="item-input">
-                                                <select name="bookPeriod" th:name="bookPeriod">
+                                                <select name="fetch_periods" th:name="bookPeriod">
                                                     <option th:each="per:${deliver_periods}" th:text="${per.name}" th:value="${per.id}">上午 08:00~12:00</option>
                                                 </select>
                                             </div>

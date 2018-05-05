@@ -6,13 +6,11 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import site.binghai.store.config.IceConfig;
 import site.binghai.store.controller.BaseController;
-import site.binghai.store.entity.City;
-import site.binghai.store.entity.ExpressOrder;
-import site.binghai.store.entity.RegionConfig;
-import site.binghai.store.entity.UnifiedOrder;
+import site.binghai.store.entity.*;
 import site.binghai.store.enums.BookingTypeEnum;
 import site.binghai.store.enums.PayBizEnum;
 import site.binghai.store.service.*;
+import site.binghai.store.tools.TimeTools;
 import site.binghai.store.tools.TplGenerator;
 
 import java.util.Arrays;
@@ -36,6 +34,8 @@ public class ExpressController extends BaseController {
     private WxService wxService;
     @Autowired
     private IceConfig iceConfig;
+    @Autowired
+    private ManagerService managerService;
     @Autowired
     private BookPeriodService bookPeriodService;
 
@@ -104,6 +104,9 @@ public class ExpressController extends BaseController {
 
         expressOrder = expressOrderService.save(expressOrder);
 
+        managerService.findByRegionId(unifiedOrder.getRegionId())
+                .forEach(v -> commitSuccess(v, unifiedOrder));
+
         return "redirect:/user/confirmExpressOrder?unifiedId=" + expressOrder.getUnifiedId();
     }
 
@@ -138,6 +141,18 @@ public class ExpressController extends BaseController {
 
         expressOrder = expressOrderService.save(expressOrder);
         return "redirect:/user/confirmExpressOrder?unifiedId=" + expressOrder.getUnifiedId();
+    }
+
+    private void commitSuccess(Manager manager, UnifiedOrder order) {
+        wxService.tplMessage(iceConfig.getNewOrderNoticeTpl(), TplGenerator.getInstance()
+                .put("first", "新" + order.getTitle() + "订单到达!用户已下单，请联系用户确定费用，点击设定价格")
+                .put("keyword1", order.getTitle())
+                .put("keyword2", TimeTools.now())
+                .put("keyword3", "Id" + order.getUserId())
+                .put("keyword4", order.getUserName())
+                .put("keyword5", "待确认")
+                .put("remark", "点击设定价格")
+                .getAll(), manager.getOpenId(), iceConfig.getServer() + "/user/orderDetail?unifiedId=" + order.getId() + "&openid=" + manager.getOpenId());
     }
 
     @PostMapping("setPrice4ExpressOrder")
