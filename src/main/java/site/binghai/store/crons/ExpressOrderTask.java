@@ -39,25 +39,31 @@ public class ExpressOrderTask extends BaseBean {
         logger.info("ExpressOrderTask start.");
         List<ExpressOrder> ls = expressOrderService.findByPayStateAndCanceled(Boolean.FALSE, Boolean.FALSE);
         ls.forEach(v -> {
-            if (TimeTools.currentTS() - v.getCreated() > 60000 * 30) {
-                v.setCanceled(true);
-                expressOrderService.update(v);
-
-                UnifiedOrder unifiedOrder = unifiedOrderService.findById(v.getUnifiedId());
-                unifiedOrder.setStatus(OrderStatusEnum.OUTOFDATE.getCode());
-                unifiedOrderService.update(unifiedOrder);
-
-                userCouponService.rollBackCoupon(unifiedOrder);
-
-                wxService.tplMessage(iceConfig.getOrderCanceledNotice(), TplGenerator.getInstance()
-                        .put("first", "您的" + unifiedOrder.getTitle() + "订单已取消")
-                        .put("orderProductPrice", unifiedOrder.getShouldPay() / 100.0 + "元")
-                        .put("orderProductName", unifiedOrder.getTitle())
-                        .put("orderAddress", "请进入详情查看")
-                        .put("orderName", unifiedOrder.getOrderId())
-                        .put("remark", "欢迎您的再次光临")
-                        .getAll(), unifiedOrder.getOpenId(), iceConfig.getServer() + "/user/confirmExpressOrder?unifiedId=" + unifiedOrder.getId());
+            if (!v.getPriceConfirmed() && TimeTools.currentTS() - v.getCreated() > 86400 * 100) {
+                setOutOfDate(v);
+            } else if (TimeTools.currentTS() - v.getCreated() > 60000 * 30) {
+                setOutOfDate(v);
             }
         });
+    }
+
+    private void setOutOfDate(ExpressOrder v) {
+        v.setCanceled(true);
+        expressOrderService.update(v);
+
+        UnifiedOrder unifiedOrder = unifiedOrderService.findById(v.getUnifiedId());
+        unifiedOrder.setStatus(OrderStatusEnum.OUTOFDATE.getCode());
+        unifiedOrderService.update(unifiedOrder);
+
+        userCouponService.rollBackCoupon(unifiedOrder);
+
+        wxService.tplMessage(iceConfig.getOrderCanceledNotice(), TplGenerator.getInstance()
+                .put("first", "您的" + unifiedOrder.getTitle() + "订单已取消")
+                .put("orderProductPrice", unifiedOrder.getShouldPay() / 100.0 + "元")
+                .put("orderProductName", unifiedOrder.getTitle())
+                .put("orderAddress", "请进入详情查看")
+                .put("orderName", unifiedOrder.getOrderId())
+                .put("remark", "欢迎您的再次光临")
+                .getAll(), unifiedOrder.getOpenId(), iceConfig.getServer() + "/user/confirmExpressOrder?unifiedId=" + unifiedOrder.getId());
     }
 }

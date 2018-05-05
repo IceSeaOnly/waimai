@@ -5,15 +5,19 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import site.binghai.store.config.IceConfig;
+import site.binghai.store.controller.AfterPay;
 import site.binghai.store.controller.BaseController;
 import site.binghai.store.entity.*;
 import site.binghai.store.enums.BookingTypeEnum;
+import site.binghai.store.enums.OrderStatusEnum;
 import site.binghai.store.enums.PayBizEnum;
 import site.binghai.store.service.*;
+import site.binghai.store.tools.MD5;
 import site.binghai.store.tools.TimeTools;
 import site.binghai.store.tools.TplGenerator;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /**
  * Created by IceSea on 2018/4/27.
@@ -74,7 +78,7 @@ public class ExpressController extends BaseController {
                               @RequestParam Long city,
                               ModelMap map
     ) {
-        if (!noEmptyString(Arrays.asList(to, toPhone, from, fromPhone, toWhere))) {
+        if (city < 0 || !noEmptyString(Arrays.asList(to, toPhone, from, fromPhone, toWhere))) {
             return commonResp("输入有误", "输入不正确，请确认输入完整", "好的", "/user/exIndex", map);
         }
 
@@ -170,7 +174,7 @@ public class ExpressController extends BaseController {
                 .put("keyword2", unifiedOrder.originalDoublePrice() + "元")
                 .put("keyword3", unifiedOrder.getCreatedTime())
                 .put("remark", "点击进入支付页")
-                .getAll(), unifiedOrder.getOpenId(), "/user/confirmExpressOrder?unifiedId=" + unifiedOrder.getId());
+                .getAll(), unifiedOrder.getOpenId(), iceConfig.getServer() + "/user/confirmExpressOrder?unifiedId=" + unifiedOrder.getId());
 
         return commonResp("设定完毕", "请用户继续支付", "好的", "/user/index", map);
     }
@@ -248,5 +252,25 @@ public class ExpressController extends BaseController {
         map.put("detail", sb.toString());
         map.put("adminTag", true);
         return "confirmExpressOrder";
+    }
+
+    @Autowired
+    private AfterPay afterPay;
+
+    @RequestMapping("confirmOfflinePay")
+    public String confirmOfflinePay(@RequestParam Long id, ModelMap map) {
+        ExpressOrder order = expressOrderService.findById(id);
+        UnifiedOrder unifiedOrder = unifiedOrderService.findById(order.getUnifiedId());
+        Boolean isManager = managerService.findByRegionId(unifiedOrder.getRegionId()).stream()
+                .anyMatch(v -> v.getOpenId().equals(getUser().getOpenId()));
+
+        if (!isManager) {
+            return commonResp("非法访问", "非法访问", "返回", "/user/index", map);
+        }
+        unifiedOrder.setStatus(OrderStatusEnum.PAIED.getCode());
+        unifiedOrder.setOrderId("OFFLINE_" + TimeTools.currentTS());
+        unifiedOrderService.update(unifiedOrder);
+        afterPay.afterPay(unifiedOrder.getOrderId(), MD5.encryption(unifiedOrder.getOpenId()));
+        return commonResp("设定完毕", "请用户继续支付", "好的", "/user/index", map);
     }
 }
