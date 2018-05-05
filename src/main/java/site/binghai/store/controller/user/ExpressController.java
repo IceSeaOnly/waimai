@@ -198,6 +198,8 @@ public class ExpressController extends BaseController {
             sb.append("寄件地址: " + order.getToWhere() + "</br>");
             sb.append("预约时间: " + order.getBookPeriod() + "</br>");
             sb.append("内容物: " + order.getWhatIs() + "</br>");
+            sb.append("快递名:" + order.getExName() + "</br>");
+            sb.append("快递单号:" + order.getExNo() + "</br>");
         } else {
             sb.append("收件人: " + order.getFrom() + "</br>");
             sb.append(String.format("收件手机: <a href=\"tel:%s\">%s</a></br>", order.getToPhone(), order.getToPhone()));
