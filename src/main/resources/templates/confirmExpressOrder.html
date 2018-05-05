@@ -8,10 +8,6 @@
     <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
     <script type="text/javascript" src="http://g.alicdn.com/sj/lib/zepto/zepto.min.js" charset="utf-8"></script>
     <script type="text/javascript" src="http://g.alicdn.com/msui/sm/0.6.2/js/sm.min.js" charset="utf-8"></script>
-    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/??sm.min.css,sm-extend.min.css">
-    <script type="text/javascript" src="http://g.alicdn.com/msui/sm/0.6.2/js/??sm.min.js,sm-extend.min.js"
-            charset="utf-8"></script>
-
 
 </head>
 <body>
@@ -101,10 +97,14 @@
     </div>
 </div>
 <script>
+    $.init();
     function confirmOfflinePay(id) {
-        $.confirm('确认已经线下支付?', function () {
+        console.log(id);
+        var r=confirm("确认已经线下支付?");
+        if (r==true) {
             window.location.href='/user/confirmOfflinePay?id='+id
-        });
+
+        };
     }
 </script>
 </body>
