@@ -33,7 +33,7 @@ public class ManagerController extends BaseController {
         return success();
     }
 
-    @GetMapping("add")
+    @PostMapping("add")
     public Object add(@RequestBody Map map) {
         Long userId = getLong(map, "userId");
         Long regionId = getLong(map, "regionId");
