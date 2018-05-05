@@ -30,6 +30,10 @@ public enum BookingTypeEnum {
         }
     }
 
+    public static BookingTypeEnum valueOf(Integer code){
+        return maps.get(code);
+    }
+
     public int getCode() {
         return code;
     }

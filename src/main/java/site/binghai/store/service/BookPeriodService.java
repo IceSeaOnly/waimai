@@ -20,4 +20,10 @@ public class BookPeriodService extends BaseService<BookPeriod> {
                 .collect(Collectors.toList());
 
     }
+    public List<BookPeriod> getPeriods(BookingTypeEnum typeEnum) {
+        return findAll(9999).stream()
+                .filter(v -> v.getBookingType().equals(typeEnum.getCode()))
+                .collect(Collectors.toList());
+
+    }
 }
