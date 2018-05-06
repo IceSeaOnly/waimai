@@ -188,7 +188,7 @@ public class UnifiedOrderController extends BaseController {
                 break;
         }
 
-        wxService.tplMessage(iceConfig.getRefundRequestAcceptedTpl(), TplGenerator.getInstance()
+        wxService.tplMessage(iceConfig.getRefuseRefund(), TplGenerator.getInstance()
                 .put("first", "很抱歉,您申请的退款没有通过！")
                 .put("keyword3", order.getShouldPay() / 100.0 + "元")
                 .put("keyword4", "管理员拒绝操作")
