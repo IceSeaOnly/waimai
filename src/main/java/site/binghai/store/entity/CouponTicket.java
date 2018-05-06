@@ -58,8 +58,10 @@ public class CouponTicket extends BaseEntity {
         return TimeTools.format(activityEndTime);
     }
 
+    /** 仅供前端调用 */
+    @Deprecated
     public double doubleVal() {
-        return couponType() == CouponTypeEnum.FULL_DISCOUNT ? val / 10.0 : val / 100.0;
+        return val / 100.0;
     }
 
     public String getDescribe() {
