@@ -76,7 +76,7 @@ public class TradeItemController extends BaseController {
         TradeItem item = tradeItemService.newInstance(map);
         item.setId(null);
         item.setSaleCount(0);
-        item.setOnLine(item.getOnLine() == null ? false : item.getOnLine());
+        item.setOnLine(Boolean.TRUE);
 
         return success(tradeItemService.save(item), "SUCCESS");
     }
