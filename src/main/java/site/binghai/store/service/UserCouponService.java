@@ -107,7 +107,10 @@ public class UserCouponService extends BaseService<Coupon> {
             case FULL_DISCOUNT:
                 int max = Math.min(order.getOriginalPrice() * couponTicket.getVal() / 100, couponTicket.getDiscountLimit());
                 int res = order.getOriginalPrice() - max;
-                order.setShouldPay(res > 0 ? res : 1);
+                order.setShouldPay(res);
+        }
+        if (order.getShouldPay() <= 0) {
+            order.setShouldPay(1);
         }
     }
 
