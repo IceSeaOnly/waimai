@@ -14,6 +14,7 @@ public enum TakeOutStatusEnum {
     SENDING(3,"配送中"),
     ENDED(4,"已结束"),
     MANAGAER_DOING(5,"管理流程中"),
+    USER_RECEIVED_CONFIRMED(6,"已确认收货"),
 
     ;
 

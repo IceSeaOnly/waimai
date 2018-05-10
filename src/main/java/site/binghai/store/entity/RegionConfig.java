@@ -22,4 +22,5 @@ public class RegionConfig extends BaseEntity {
     private String deliveryExplain; // 寄快递说明
     private String fetchExplain; // 取快递说明
     private Integer fetchFee; // 取快递价格
+    private Integer fruitMinCost; // 水果最低起送价
 }

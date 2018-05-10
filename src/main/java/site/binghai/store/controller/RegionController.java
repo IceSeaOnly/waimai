@@ -45,7 +45,6 @@ public class RegionController extends BaseController {
 
     @PostMapping("update")
     public Object update(@RequestBody Map map) {
-        map.put("fetchFee", Double.valueOf(getDoubleValue(map, "fetchFee") * 100).intValue());
         logger.warn("{} update regionConfig to {}", getAdmin(), map);
         try {
             regionConfigService.updateAndSave(getAdmin(), map);

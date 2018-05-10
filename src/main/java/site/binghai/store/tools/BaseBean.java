@@ -43,4 +43,13 @@ public abstract class BaseBean extends MapUtils {
         }
         return true;
     }
+
+    protected boolean noEmptyString(String... strs){
+        for (String str : strs) {
+            if(StringUtils.isEmpty(str))
+                return false;
+        }
+        return true;
+    }
+
 }

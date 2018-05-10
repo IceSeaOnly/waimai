@@ -52,8 +52,13 @@ public class UnifiedOrderController extends BaseController {
                        @RequestParam Integer pageSize,
                        @RequestParam Long regionId,
                        @RequestParam(name = "currentCategory") Integer orderStatus,
-                       @RequestParam String currentTab
+                       @RequestParam String currentTab,
+                       String search
     ) {
+
+        if (noEmptyString(search)) {
+            return searchData(search);
+        }
         page--;
         String biz = currentTab.split("_")[1];
         PayBizEnum payBiz = PayBizEnum.valueOf(Integer.valueOf(biz));
@@ -74,6 +79,24 @@ public class UnifiedOrderController extends BaseController {
         data.put("total", unifiedOrderService.countByAppCodeAndRegionIdAndStatus(payBiz, regionId, status.getCode()));
         data.put("pageSize", pageSize);
         data.put("currentPage", page);
+        return success(data, "SUCCESS");
+    }
+
+    private Object searchData(String search) {
+        JSONArray list = newJSONArray();
+        List<UnifiedOrder> orders = unifiedOrderService.findBySearchWords(search);
+        for (UnifiedOrder order : orders) {
+            JSONObject item = toJsonObject(order);
+            item.put("orders", getMoreOrderInfo(order));
+            item.put("operations", buildOperations(order));
+            list.add(item);
+        }
+
+        JSONObject data = newJSONObject();
+        data.put("list", list);
+        data.put("total", list.size());
+        data.put("pageSize", list.size());
+        data.put("currentPage", 1);
         return success(data, "SUCCESS");
     }
 
@@ -216,13 +239,13 @@ public class UnifiedOrderController extends BaseController {
                 arr.add(buildButtonOperation("/admin/uo/cancel", "取消", false));
                 break;
             case PROCESSING:
-                if(order.getAppCode().equals(PayBizEnum.EXPRESS.getCode())){
-                    arr.add(buildButtonOperation(iceConfig.getServer()+"/admin/express/edit?id="+order.getId(),"编辑",false));
+                if (order.getAppCode().equals(PayBizEnum.EXPRESS.getCode())) {
+                    arr.add(buildButtonOperation(iceConfig.getServer() + "/admin/express/edit?id=" + order.getId(), "编辑", false));
                 }
                 arr.add(buildButtonOperation("/admin/uo/done", "完成", true));
             case COMPLETE:
-                if(order.getAppCode().equals(PayBizEnum.EXPRESS.getCode())){
-                    arr.add(buildButtonOperation(iceConfig.getServer()+"/admin/express/edit?id="+order.getId(),"编辑",false));
+                if (order.getAppCode().equals(PayBizEnum.EXPRESS.getCode())) {
+                    arr.add(buildButtonOperation(iceConfig.getServer() + "/admin/express/edit?id=" + order.getId(), "编辑", false));
                 }
                 break;
             case REFUNDING:

@@ -68,6 +68,9 @@
         <a th:href="'/user/cancelOrder?unifiedId='+${uorder.id}" th:if="${uorder.status<4}">
             <button>取消订单</button>
         </a>
+        <a th:href="'/user/confirmReceived?unifiedId='+${uorder.id}" th:if="${uorder.status>2 && order.takeOutStatus < 6}">
+            <button>确认收货</button>
+        </a>
     </div>
 
 </article>

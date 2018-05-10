@@ -12,5 +12,6 @@ import java.util.List;
 public interface UserCouponDao extends JpaRepository<Coupon, Long> {
     List<Coupon> findByUserId(Long userid);
     Coupon findByCouponId(Long id);
+    Coupon findByCouponIdAndUserId(Long id,Long userId);
     List<Coupon> findByOutOfDateTsBeforeAndCouponStatus(Long ts,int state);
 }

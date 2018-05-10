@@ -105,9 +105,9 @@ public class UserCouponService extends BaseService<Coupon> {
                 order.setShouldPay(order.getOriginalPrice() - couponTicket.getVal());
                 break;
             case FULL_DISCOUNT:
-                int max = Math.min(order.getOriginalPrice() * couponTicket.getVal() / 100, couponTicket.getDiscountLimit());
-                int res = order.getOriginalPrice() - max;
-                order.setShouldPay(res);
+                int test = order.getOriginalPrice() * couponTicket.getVal() / 1000;
+                int max = Math.max(test, order.getShouldPay() - couponTicket.getDiscountLimit());
+                order.setShouldPay(max);
         }
         if (order.getShouldPay() <= 0) {
             order.setShouldPay(1);
@@ -127,5 +127,9 @@ public class UserCouponService extends BaseService<Coupon> {
         });
 
         logger.info("{} coupon(s) out of date.", ls.size());
+    }
+
+    public Coupon findByTicketIdAndUserId(Long couponId, Long userId) {
+        return userCouponDao.findByCouponIdAndUserId(couponId, userId);
     }
 }

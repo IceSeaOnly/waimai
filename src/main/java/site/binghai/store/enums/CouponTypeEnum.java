@@ -14,6 +14,7 @@ public enum CouponTypeEnum {
     FULL_DISCOUNT(0,"折扣券"),
     MINUS_PRICE(1,"立减券"),
     FREE_ORDER(2,"免单券"),
+    RANDOM(3,"随机立减券"),
 
     ;
 

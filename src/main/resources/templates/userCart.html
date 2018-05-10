@@ -56,17 +56,18 @@
     </form>
 
     <div class="footer">
-        <div class="left">已选：
-            <span id="cartN">
-			<span id="totalcountshow">0</span>份　总计：￥<span id="totalpriceshow">0</span></span>元
+        <div class="left">
+            共<span id="cartN"><span id="totalcountshow">0</span>份 总计:￥<span id="totalpriceshow">0</span></span>元<span id="costNotEnough"></span>
         </div>
         <div class="right">
             <a id="btnselect" class="xhlbtn  disable" onclick="makeOrder()">去结算</a>
         </div>
     </div>
+
+    <input type="hidden" id="fruitMinCost" th:value="${regionConfig.fruitMinCost/100.0}"/>
 </div>
 
-<script type="text/javascript">
+<script type="text/javascript" >
     function makeOrder(){
         $("#input_form").submit();
     }
@@ -136,10 +137,13 @@
             }
         });
         function jss() {
-            var m = $("#totalcountshow").html();
-            if (m > 0) {
+            var fruitMinCost = parseFloat($("#fruitMinCost").val());
+            var m = parseFloat($("#totalpriceshow").html());
+            if (m >= fruitMinCost) {
                 $(".right").find("a").removeClass("disable");
+                $("#costNotEnough").text("");
             } else {
+                $("#costNotEnough").text(",还差"+((fruitMinCost-m).toFixed(2))+"元起送");
                 $(".right").find("a").addClass("disable");
             }
         };

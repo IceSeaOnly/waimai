@@ -46,6 +46,8 @@ public class UserOrderController extends BaseController {
     private WxService wxService;
     @Autowired
     private ManagerService managerService;
+    @Autowired
+    private RegionConfigService regionConfigService;
 
     /**
      * 前往购物页面
@@ -57,9 +59,6 @@ public class UserOrderController extends BaseController {
             return commonResp("欢迎光临!", "为了提供更好的服务，请先完善信息", "点我完善信息", "/user/memberInfo", map);
         }
         List<Category> menus = categoryService.listAllByFid(user.getRegionId());
-        if (CollectionUtils.isEmpty(menus)) {
-            return commonResp("空空如也", "店铺没有上任何商品哦~ 等等再来吧~", "好的", "/user/index", map);
-        }
 
         List itemSet = emptyList();
         List<Long> itemIds = emptyList();
@@ -69,7 +68,12 @@ public class UserOrderController extends BaseController {
             itemSet.add(items == null ? emptyList() : items);
         }
 
+        if (CollectionUtils.isEmpty(itemIds)) {
+            return commonResp("空空如也", "店铺没有上任何商品哦~ 等等再来吧~", "好的", "/user/index", map);
+        }
+
         map.put("menus", menus);
+        map.put("regionConfig", regionConfigService.findByRegionId(getUser().getRegionId()));
         map.put("itemSet", itemSet);
         map.put("itemIds", itemIds);
         return "userCart";
@@ -164,6 +168,28 @@ public class UserOrderController extends BaseController {
         map.put("conponPrice", (unifiedOrder.getOriginalPrice() - unifiedOrder.getShouldPay()) / 100.0); // 优惠金额
 
         return "userConfirmOrder";
+    }
+
+    @RequestMapping("confirmReceived")
+    public String confirmReceived(@RequestParam Long unifiedId, ModelMap map) {
+        FruitTakeOut fruitTakeOut = fruitTakeOutService.findByUnifiedId(unifiedId);
+
+        if (fruitTakeOut == null) {
+            return commonResp("参数有误", "订单不存在", "返回主页", "/user/index", map);
+        }
+
+        UnifiedOrder unifiedOrder = unifiedOrderService.findById(fruitTakeOut.getUnifiedOrderId());
+        if (unifiedOrder.getOrderId().equals(getUser().getId())) {
+            return commonResp("参数有误", "订单所属有误", "返回主页", "/user/index", map);
+        }
+
+        unifiedOrder.setStatus(OrderStatusEnum.COMPLETE.getCode());
+        fruitTakeOut.setTakeOutStatus(TakeOutStatusEnum.USER_RECEIVED_CONFIRMED.getCode());
+
+        unifiedOrderService.update(unifiedOrder);
+        fruitTakeOutService.update(fruitTakeOut);
+
+        return "redirect:/user/orderList";
     }
 
     /**

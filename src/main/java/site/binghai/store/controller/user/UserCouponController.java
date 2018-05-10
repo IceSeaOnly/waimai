@@ -1,5 +1,6 @@
 package site.binghai.store.controller.user;
 
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,6 +12,7 @@ import site.binghai.store.entity.Coupon;
 import site.binghai.store.entity.CouponTicket;
 import site.binghai.store.entity.UnifiedOrder;
 import site.binghai.store.enums.CouponStatusEnum;
+import site.binghai.store.enums.CouponTypeEnum;
 import site.binghai.store.enums.OrderStatusEnum;
 import site.binghai.store.enums.PayBizEnum;
 import site.binghai.store.service.CouponTicketService;
@@ -18,6 +20,8 @@ import site.binghai.store.service.UnifiedOrderService;
 import site.binghai.store.service.UserCouponService;
 
 import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -127,7 +131,22 @@ public class UserCouponController extends BaseController {
         if (ticket.getRemaining() <= 0) {
             return commonResp("来晚了", "优惠券已被领完!", "返回主页", "/user/index", map);
         }
-        Coupon coupon = userCouponService.findByTicketId(ticket.getId());
+        // 增加可以无限次领取的随机金额券 begin
+        if (ticket.couponType() == CouponTypeEnum.RANDOM) {
+            Random random = new Random();
+            ticket = toJsonObject(ticket).toJavaObject(CouponTicket.class);
+            int v = random.nextInt(ticket.getRandomTo() - ticket.getRandomFrom() + 1) + ticket.getRandomFrom();
+            ticket.setVal(v);
+            ticket.setRemark("fork from "+ticket.getId());
+            ticket.setDiscountLimit(v);
+            ticket.setCouponType(CouponTypeEnum.MINUS_PRICE.getCode());
+            ticket.setId(null);
+            ticket.setRemaining(1);
+            ticket.setUuid(UUID.randomUUID().toString());
+            ticket = couponTicketService.save(ticket);
+        }
+        // 增加可以无限次领取的随机金额券 end
+        Coupon coupon = userCouponService.findByTicketIdAndUserId(ticket.getId(), getUser().getId());
         if (coupon != null) {
             return commonResp("不要太贪心哦", "你已经领过该优惠券了!", "返回主页", "/user/index", map);
         }

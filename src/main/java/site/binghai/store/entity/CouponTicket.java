@@ -37,6 +37,12 @@ public class CouponTicket extends BaseEntity {
     private String regionName;
     private Integer discountLimit; // 折扣券上限
 
+    private Integer randomFrom; // 随机起点
+    private Integer randomTo; // 随机终点
+
+    private String remark;
+
+
     public CouponTicket() {
         uuid = UUID.randomUUID().toString();
     }
@@ -67,11 +73,11 @@ public class CouponTicket extends BaseEntity {
     public String getDescribe() {
         switch (couponType()) {
             case FULL_DISCOUNT:
-                return "最高" + discountLimit / 100 + "元";
+                return "最高" + discountLimit / 100.0 + "元";
             case FREE_ORDER:
                 return "立享免单";
             case MINUS_PRICE:
-                return "立减" + val / 100 + "元";
+                return "立减" + val / 100.0 + "元";
         }
         return "";
     }

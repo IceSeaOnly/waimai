@@ -65,20 +65,34 @@ public class UnifiedOrderService extends BaseService<UnifiedOrder> {
         order.setRegionId(user.getRegionId());
         order.setUserId(user.getId());
         order.setUserName(user.getUserName());
+        order.setUserPhone(user.getPhone());
         order.setTitle(title);
         order.setShouldPay(payMuch);
         order.setOriginalPrice(payMuch);
         return save(order);
     }
 
-    public List<UnifiedOrder> listByUserAndBiz(User user, PayBizEnum fruitTakeOut) {
-        return null;
-    }
 
     public UnifiedOrder findByOrderId(String orderKey) {
         UnifiedOrder unifiedOrder = new UnifiedOrder();
         unifiedOrder.setStatus(null);
         unifiedOrder.setOrderId(orderKey);
         return queryOne(unifiedOrder);
+    }
+
+    public List<UnifiedOrder> findBySearchWords(String search) {
+        List<UnifiedOrder> res = emptyList();
+
+        UnifiedOrder unifiedOrder = new UnifiedOrder();
+        unifiedOrder.setOrderId(null);
+        unifiedOrder.setStatus(null);
+        unifiedOrder.setUserName(search);
+
+        res.addAll(query(unifiedOrder));
+        unifiedOrder.setUserName(null);
+        unifiedOrder.setUserPhone(search);
+
+        res.addAll(query(unifiedOrder));
+        return res;
     }
 }
