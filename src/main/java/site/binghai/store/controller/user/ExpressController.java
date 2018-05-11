@@ -74,11 +74,12 @@ public class ExpressController extends BaseController {
 //                              @RequestParam Double fee,
                               @RequestParam String toWhere,
                               @RequestParam String whatIs,
+                              @RequestParam String personalId,
                               @RequestParam Long bookPeriod,
                               @RequestParam Long city,
                               ModelMap map
     ) {
-        if (city < 0 || !noEmptyString(Arrays.asList(to, toPhone, from, fromPhone, toWhere))) {
+        if (city < 0 || !noEmptyString(Arrays.asList(to, toPhone, from, fromPhone, toWhere,personalId))) {
             return commonResp("输入有误", "输入不正确，请确认输入完整", "好的", "/user/exIndex", map);
         }
 
@@ -100,6 +101,7 @@ public class ExpressController extends BaseController {
         expressOrder.setToPhone(toPhone);
         expressOrder.setFrom(from);
         expressOrder.setFromPhone(fromPhone);
+        expressOrder.setPersonalId(personalId);
         expressOrder.setType(0);
         City c = cityService.findById(city);
         expressOrder.setToWhere(c.getProvince() + c.getCity() + toWhere);
@@ -198,6 +200,7 @@ public class ExpressController extends BaseController {
             sb.append("寄件地址: " + order.getToWhere() + "</br>");
             sb.append("预约时间: " + order.getBookPeriod() + "</br>");
             sb.append("内容物: " + order.getWhatIs() + "</br>");
+            sb.append("身份证号:" + order.getPersonalId() + "</br>");
             sb.append("快递名:" + order.getExName() + "</br>");
             sb.append("快递单号:" + order.getExNo() + "</br>");
         } else {
@@ -241,6 +244,7 @@ public class ExpressController extends BaseController {
             sb.append("寄件地址:" + order.getToWhere() + "</br>");
             sb.append("预约时间:" + order.getBookPeriod() + "</br>");
             sb.append("内容物:" + order.getWhatIs() + "</br>");
+            sb.append("身份证号:" + order.getPersonalId() + "</br>");
             sb.append("快递名:" + order.getExName() + "</br>");
             sb.append("快递单号:" + order.getExNo() + "</br>");
         } else {

@@ -49,6 +49,7 @@ public class ExpressOrderService extends BaseService<ExpressOrder> implements Un
             arr.add(item("寄件人", expressOrder.getFrom()));
             arr.add(item("寄件电话", expressOrder.getFromPhone()));
             arr.add(item("收件人", expressOrder.getTo()));
+            arr.add(item("身份证号", expressOrder.getPersonalId()));
             arr.add(item("收件电话", expressOrder.getToPhone()));
             arr.add(item("收件地址", expressOrder.getToWhere()));
             arr.add(item("内容物", expressOrder.getWhatIs()));

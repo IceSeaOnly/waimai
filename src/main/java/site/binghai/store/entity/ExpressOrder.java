@@ -49,4 +49,6 @@ public class ExpressOrder extends BaseEntity {
     private String exName; // 快递名
     private String exNo; // 快递单号
 
+    private String personalId; // 身份证号
+
 }

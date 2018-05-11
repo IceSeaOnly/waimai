@@ -240,12 +240,12 @@ public class UnifiedOrderController extends BaseController {
                 break;
             case PROCESSING:
                 if (order.getAppCode().equals(PayBizEnum.EXPRESS.getCode())) {
-                    arr.add(buildButtonOperation(iceConfig.getServer() + "/admin/express/edit?id=" + order.getId(), "编辑", false));
+                    arr.add(buildButtonOperation("/admin/express/edit?id=" + order.getId(), "编辑", false));
                 }
                 arr.add(buildButtonOperation("/admin/uo/done", "完成", true));
             case COMPLETE:
                 if (order.getAppCode().equals(PayBizEnum.EXPRESS.getCode())) {
-                    arr.add(buildButtonOperation(iceConfig.getServer() + "/admin/express/edit?id=" + order.getId(), "编辑", false));
+                    arr.add(buildButtonOperation("/admin/express/edit?id=" + order.getId(), "编辑", false));
                 }
                 break;
             case REFUNDING:
