@@ -91,7 +91,7 @@
                 </div>
 
                 <div class="content-block" th:if="${isOwner && !order.hasPay && !order.canceled && order.priceConfirmed}">
-                    <p><a th:href="${'/user/goToPay?unifiedId='+uorder.id}" class="button button-big">立即支付</a></p>
+                    <p><a th:href="${'/user/goToPay?unifiedId='+uorder.id}" class="button button-big" external>立即支付</a></p>
                 </div>
 
                 <div class="content-block-title">订单详细信息</div>
