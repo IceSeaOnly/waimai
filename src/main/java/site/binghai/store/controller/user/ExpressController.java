@@ -227,6 +227,7 @@ public class ExpressController extends BaseController {
         map.put("order", order);
         map.put("detail", sb.toString());
         map.put("adminTag", false);
+        map.put("isOwner",true);
         return "confirmExpressOrder";
     }
 
@@ -271,6 +272,7 @@ public class ExpressController extends BaseController {
         map.put("order", order);
         map.put("detail", sb.toString());
         map.put("adminTag", true);
+        map.put("isOwner",false);
         return "confirmExpressOrder";
     }
 
