@@ -188,6 +188,7 @@ public class UserOrderController extends BaseController {
 
         unifiedOrderService.update(unifiedOrder);
         fruitTakeOutService.update(fruitTakeOut);
+        map.put("isOwner",true);
 
         return "redirect:/user/orderList";
     }
@@ -214,6 +215,7 @@ public class UserOrderController extends BaseController {
         map.put("address", address);
         map.put("couponInfo", unifiedOrder.getCouponId() == null ? "未使用优惠券" : "已使用优惠券");
         map.put("conponPrice", (unifiedOrder.getOriginalPrice() - unifiedOrder.getShouldPay()) / 100.0); // 优惠金额
+        map.put("isOwner",false);
 
         return "userConfirmOrder";
     }

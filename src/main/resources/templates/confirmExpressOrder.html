@@ -29,7 +29,7 @@
                             <div class="item-after" th:text="${order.createdTime}">2018-04-28 13:52:00</div>
                         </div>
                     </li>
-                    <a th:href="${'/user/couponList?unifiedId='+uorder.id}" external>
+                    <a th:if="${order.priceConfirmed}" th:href="${'/user/couponList?unifiedId='+uorder.id}" external>
                         <li class="item-content item-link">
                             <div class="item-inner">
                                 <div class="item-title">优惠券</div>
@@ -37,6 +37,12 @@
                             </div>
                         </li>
                     </a>
+                    <li class="item-content item-link" th:if="${!order.priceConfirmed}">
+                        <div class="item-inner">
+                            <div class="item-title">优惠券</div>
+                            <div class="item-after" style="color: red">请等待确认费用</div>
+                        </div>
+                    </li>
                     <li class="item-content ">
                         <div class="item-inner">
                             <div class="item-title">订单金额</div>
@@ -84,7 +90,7 @@
 
                 </div>
 
-                <div class="content-block" th:if="${!order.hasPay && !order.canceled && order.priceConfirmed}">
+                <div class="content-block" th:if="${isOwner && !order.hasPay && !order.canceled && order.priceConfirmed}">
                     <p><a th:href="${'/user/goToPay?unifiedId='+uorder.id}" class="button button-big">立即支付</a></p>
                 </div>
 
@@ -96,8 +102,20 @@
         </div>
     </div>
 </div>
+<input type="hidden" id="orderId" th:value="${order.priceConfirmed ? -1 : order.id}"/>
 <script>
     $.init();
+    setInterval(function () {
+        var orderId = $("#orderId").val();
+        if(orderId == -1) return;
+
+        $.get('/user/isOrderPriceConfirmed?orderId='+orderId,function (data) {
+            if(data == 1)
+                window.location.reload();
+        })
+    },1000);
+
+
     function confirmOfflinePay(id) {
         console.log(id);
         var r=confirm("确认已经线下支付?");

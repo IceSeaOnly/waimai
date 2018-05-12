@@ -13,6 +13,7 @@ import site.binghai.store.tools.TimeTools;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by IceSea on 2018/4/24.
@@ -52,6 +53,7 @@ public class UserCouponService extends BaseService<Coupon> {
         update(coupon);
         order.setShouldPay(order.getOriginalPrice());
         order.setCouponId(null);
+        order.setOrderId(UUID.randomUUID().toString().substring(9));
     }
 
     @Transactional
@@ -62,6 +64,8 @@ public class UserCouponService extends BaseService<Coupon> {
         if (order.getCouponId() != null) {
             rollBackCoupon(order);
         }
+
+        order.setOrderId(UUID.randomUUID().toString().substring(9));
 
         if (order.getStatus() >= OrderStatusEnum.PAIED.getCode()) {
             throw new Exception("订单已支付,优惠券不可用");

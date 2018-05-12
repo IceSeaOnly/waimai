@@ -181,6 +181,18 @@ public class ExpressController extends BaseController {
         return commonResp("设定完毕", "请用户继续支付", "好的", "/user/index", map);
     }
 
+
+    @RequestMapping("isOrderPriceConfirmed")
+    @ResponseBody
+    public Object isOrderPriceConfirmed(@RequestParam Long orderId){
+        ExpressOrder order = expressOrderService.findById(orderId);
+        if(order != null && order.getPriceConfirmed()){
+            return 1;
+        }
+        return 0;
+    }
+
+
     @GetMapping("confirmExpressOrder")
     public String confirmExpressOrder(@RequestParam Long unifiedId, ModelMap map) {
         ExpressOrder order = expressOrderService.findByUnifiedId(unifiedId);
