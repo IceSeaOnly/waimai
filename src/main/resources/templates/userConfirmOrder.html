@@ -61,7 +61,7 @@
     </div>
 
     <!--按钮-->
-    <div class="memberDetailFooter line">
+    <div class="memberDetailFooter line" th:if="${isOwner}">
         <a th:href="'/user/goToPay?unifiedId='+${uorder.id}" th:if="${uorder.status<2}">
             <button>去支付</button>
         </a>
@@ -72,9 +72,23 @@
             <button>确认收货</button>
         </a>
     </div>
+    <input type="hidden" id="printKey" th:value="${printKey}"/>
+    <!--按钮-->
+    <div class="memberDetailFooter line" th:if="${isOwner == false}">
+        <a th:href="${'javascript:printThis('+uorder.id+')'}">
+            <button>打印订单</button>
+        </a>
+    </div>
 
 </article>
-
+<script>
+    function printThis(id){
+        var printKey = $("#printKey").val();
+        $.get("/user/printOrder?unifiedId="+id+"&printKey="+printKey,function (data) {
+            console.log(data);
+        })
+    }
+</script>
 </body>
 </html>
 <script type="text/javascript" src="/js/jquery-1.7.1.min.js"></script>

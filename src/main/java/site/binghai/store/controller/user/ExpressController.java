@@ -17,6 +17,7 @@ import site.binghai.store.tools.TimeTools;
 import site.binghai.store.tools.TplGenerator;
 
 import java.util.Arrays;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -273,6 +274,9 @@ public class ExpressController extends BaseController {
         map.put("detail", sb.toString());
         map.put("adminTag", true);
         map.put("isOwner",false);
+        String printKey = UUID.randomUUID().toString();
+        getSession().setAttribute("printKey", printKey);
+        map.put("printKey", printKey);
         return "confirmExpressOrder";
     }
 

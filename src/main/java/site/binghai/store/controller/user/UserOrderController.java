@@ -6,9 +6,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import site.binghai.store.config.IceConfig;
 import site.binghai.store.controller.BaseController;
 import site.binghai.store.entity.*;
@@ -18,10 +16,7 @@ import site.binghai.store.enums.TakeOutStatusEnum;
 import site.binghai.store.service.*;
 import site.binghai.store.tools.TplGenerator;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by IceSea on 2018/4/24.
@@ -48,6 +43,10 @@ public class UserOrderController extends BaseController {
     private ManagerService managerService;
     @Autowired
     private RegionConfigService regionConfigService;
+    @Autowired
+    private ExpressOrderService expressOrderService;
+    @Autowired
+    private PrintService printService;
 
     /**
      * 前往购物页面
@@ -188,7 +187,7 @@ public class UserOrderController extends BaseController {
 
         unifiedOrderService.update(unifiedOrder);
         fruitTakeOutService.update(fruitTakeOut);
-        map.put("isOwner",true);
+        map.put("isOwner", true);
 
         return "redirect:/user/orderList";
     }
@@ -215,7 +214,10 @@ public class UserOrderController extends BaseController {
         map.put("address", address);
         map.put("couponInfo", unifiedOrder.getCouponId() == null ? "未使用优惠券" : "已使用优惠券");
         map.put("conponPrice", (unifiedOrder.getOriginalPrice() - unifiedOrder.getShouldPay()) / 100.0); // 优惠金额
-        map.put("isOwner",false);
+        map.put("isOwner", false);
+        String printKey = UUID.randomUUID().toString();
+        getSession().setAttribute("printKey", printKey);
+        map.put("printKey", printKey);
 
         return "userConfirmOrder";
     }
@@ -277,4 +279,82 @@ public class UserOrderController extends BaseController {
 
                 );
     }
+
+    @GetMapping("printOrder")
+    @ResponseBody
+    public Object printOrder(@RequestParam Long unifiedId, @RequestParam String printKey) {
+        Object key = getSession().getAttribute("printKey");
+        if (key == null || !printKey.equals(key)) {
+            return fail("printKey wrong!");
+        }
+        UnifiedOrder order = unifiedOrderService.findById(unifiedId);
+        switch (PayBizEnum.valueOf(order.getAppCode())) {
+            case EXPRESS:
+                printExpressOrder(order);
+                break;
+            case FRUIT_TAKE_OUT:
+                printFruitOrder(order);
+                break;
+        }
+
+        return success();
+    }
+
+    private void printFruitOrder(UnifiedOrder order) {
+        FruitTakeOut out = fruitTakeOutService.findByUnifiedId(order.getId());
+        PrintData data = PrintData.getInstance()
+                .CenterBold("果然鲜水果外卖订单").breakLine()
+                .text("下单时间:" + order.getCreatedTime()).breakLine()
+                .text(String.format("%-6s %-3s %-3s %-3s", "商品名称", "单价", "数量", "金额")).breakLine()
+                .text("------------------------").breakLine();
+
+        JSONArray arr = out.getItemJSONObject();
+        for (int i = 0; i < arr.size(); i++) {
+            JSONObject obj = arr.getJSONObject(i);
+            int num = obj.getInteger("num");
+            double price = obj.getDouble("price");
+            data.text(String.format("%-6s %3s x %3s = %.2f", obj.getString("name"), price, num, price * num)).breakLine();
+        }
+
+        UserAddress address = addressService.findById(out.getAddressId());
+        data.text("------------------------").breakLine()
+                .text("合计:" + order.shouldPayDouble()).breakLine()
+                .Bold("配送地点:" + address.getAddressHead() + address.getAddressDetail()).breakLine()
+                .Bold("电话：" + address.getUserPhone() + "  " + address.getUserPhone()).breakLine();
+
+        data.CenterBold(order.orderState().getName());
+        printService.print(data,regionConfigService.findByRegionId(order.getRegionId()));
+    }
+
+    private void printExpressOrder(UnifiedOrder uorder) {
+        ExpressOrder order = expressOrderService.findByUnifiedId(uorder.getId());
+        int type = order.getType();
+        PrintData data = PrintData.getInstance()
+                .CenterBold("果然鲜 " + (type == 0 ? "寄快递订单" : "取快递订单")).breakLine()
+                .text("下单时间:" + order.getCreatedTime()).breakLine()
+                .text("----------------").breakLine();
+        if (type == 0) {
+            data.text("寄件人:" + order.getFrom()).breakLine()
+                    .text(String.format("寄件人手机:%s", order.getFromPhone())).breakLine()
+                    .text("收件人:" + order.getFrom()).breakLine()
+                    .text(String.format("收件人手机:%s", order.getToPhone())).breakLine()
+                    .text("寄件地址:" + order.getToWhere()).breakLine()
+                    .text("预约时间:" + order.getBookPeriod()).breakLine()
+                    .text("内容物:" + order.getWhatIs()).breakLine()
+                    .text("身份证号:" + order.getPersonalId()).breakLine()
+                    .text("快递名:" + order.getExName()).breakLine()
+                    .text("快递单号:" + order.getExNo()).breakLine();
+        } else {
+            data.text("收件人:" + order.getFrom()).breakLine()
+                    .text(String.format("收件手机:%s", order.getToPhone())).breakLine()
+                    .text("短信内容:" + order.getSms()).breakLine()
+                    .text("配送地址:" + order.getToWhere()).breakLine()
+                    .text("预约时间:" + order.getBookPeriod()).breakLine();
+        }
+        data.CenterBold(String.format("费用: %.2f",uorder.getShouldPay()/100.0)).breakLine();
+        data.CenterBold(uorder.orderState().getName());
+        printService.print(data,regionConfigService.findByRegionId(uorder.getRegionId()));
+    }
+
+
 }

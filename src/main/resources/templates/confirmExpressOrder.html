@@ -90,6 +90,13 @@
 
                 </div>
 
+                <div class="list-block" th:if="${adminTag}">
+                    <div class="content-block">
+                        <input type="hidden" id="printKey" th:value="${printKey}"/>
+                        <p><a th:href="${'javascript:printThis('+uorder.id+')'}" class="button button-big button-info">打印</a></p>
+                    </div>
+                </div>
+
                 <div class="content-block" th:if="${isOwner && !order.hasPay && !order.canceled && order.priceConfirmed}">
                     <p><a th:href="${'/user/goToPay?unifiedId='+uorder.id}" class="button button-big" external>立即支付</a></p>
                 </div>
@@ -123,6 +130,13 @@
             window.location.href='/user/confirmOfflinePay?id='+id
 
         };
+    }
+
+    function printThis(id){
+        var printKey = $("#printKey").val();
+        $.get("/user/printOrder?unifiedId="+id+"&printKey="+printKey,function (data) {
+            console.log(data);
+        })
     }
 </script>
 </body>
