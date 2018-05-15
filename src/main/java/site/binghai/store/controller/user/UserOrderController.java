@@ -333,12 +333,14 @@ public class UserOrderController extends BaseController {
                 .CenterBold("果然鲜 " + (type == 0 ? "寄快递订单" : "取快递订单")).breakLine()
                 .text("下单时间:" + order.getCreatedTime()).breakLine()
                 .text("----------------").breakLine();
+        UserAddress address = addressService.getUserAddress(uorder.getUserId());
         if (type == 0) {
             data.text("寄件人:" + order.getFrom()).breakLine()
+                    .text("寄件地址:"+address.getAddressHead()+address.getAddressDetail()).breakLine()
                     .text(String.format("寄件人手机:%s", order.getFromPhone())).breakLine()
                     .text("收件人:" + order.getFrom()).breakLine()
                     .text(String.format("收件人手机:%s", order.getToPhone())).breakLine()
-                    .text("寄件地址:" + order.getToWhere()).breakLine()
+                    .text("收件地址:" + order.getToWhere()).breakLine()
                     .text("预约时间:" + order.getBookPeriod()).breakLine()
                     .text("内容物:" + order.getWhatIs()).breakLine()
                     .text("身份证号:" + order.getPersonalId()).breakLine()
