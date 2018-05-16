@@ -159,6 +159,7 @@ public class UserOrderController extends BaseController {
 
         UserAddress address = addressService.getUserAddress(getUser().getId());
 
+        map.put("isOwner", true);
         map.put("order", fruitTakeOut);
         map.put("uorder", unifiedOrder);
         map.put("addressMiss", address == null ? true : false);
