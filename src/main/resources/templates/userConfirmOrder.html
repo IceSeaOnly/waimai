@@ -61,7 +61,7 @@
     </div>
 
     <!--按钮-->
-    <div class="memberDetailFooter line" th:if="${isOwner}">
+    <div class="memberDetailFooter line" th:if="${isOwner == true}">
         <a th:href="'/user/goToPay?unifiedId='+${uorder.id}" th:if="${uorder.status<2}">
             <button>去支付</button>
         </a>
