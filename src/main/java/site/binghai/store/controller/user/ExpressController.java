@@ -212,10 +212,10 @@ public class ExpressController extends BaseController {
 
         map.put("title", type == 0 ? "寄快递" : "取快递");
         if (type == 0) {
-            sb.append("寄件人: " + order.getFrom() + "</br>");
+            sb.append("寄件人: " + address.getUserName() + "</br>");
             sb.append("寄件地址:"+address.getAddressHead()+address.getAddressDetail()+"<br/>");
-            sb.append(String.format("寄件人手机: <a href=\"tel:%s\">%s</a></br>", order.getFromPhone(), order.getFromPhone()));
-            sb.append("收件人 :" + order.getFrom() + "</br>");
+            sb.append(String.format("寄件人手机: <a href=\"tel:%s\">%s</a></br>", address.getUserPhone(), address.getUserPhone()));
+            sb.append("收件人 :" + order.getTo() + "</br>");
             sb.append(String.format("收件人手机: <a href=\"tel:%s\">%s</a></br>", order.getToPhone(), order.getToPhone()));
             sb.append("收件地址: " + order.getToWhere() + "</br>");
             sb.append("预约时间: " + order.getBookPeriod() + "</br>");
@@ -259,9 +259,9 @@ public class ExpressController extends BaseController {
         map.put("title", type == 0 ? "寄快递" : "取快递");
         UserAddress address = addressService.getUserAddress(order.getUserId());
         if (type == 0) {
-            sb.append("寄件人:" + order.getFrom() + "</br>");
+            sb.append("寄件人:" + address.getUserName() + "</br>");
             sb.append("寄件地址:"+address.getAddressHead()+address.getAddressDetail()+"<br/>");
-            sb.append(String.format("寄件人手机:<a href=\"tel:%s\">%s</a></br>", order.getFromPhone(), order.getFromPhone()));
+            sb.append(String.format("寄件人手机:<a href=\"tel:%s\">%s</a></br>", address.getUserPhone(), address.getUserPhone()));
             sb.append("收件人:" + order.getFrom() + "</br>");
             sb.append(String.format("收件人手机:<a href=\"tel:%s\">%s</a></br>", order.getToPhone(), order.getToPhone()));
             sb.append("收件地址:" + order.getToWhere() + "</br>");

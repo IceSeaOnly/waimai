@@ -335,10 +335,10 @@ public class UserOrderController extends BaseController {
                 .text("----------------").breakLine();
         UserAddress address = addressService.getUserAddress(uorder.getUserId());
         if (type == 0) {
-            data.text("寄件人:" + order.getFrom()).breakLine()
+            data.text("寄件人:" + address.getUserName()).breakLine()
                     .text("寄件地址:"+address.getAddressHead()+address.getAddressDetail()).breakLine()
-                    .text(String.format("寄件人手机:%s", order.getFromPhone())).breakLine()
-                    .text("收件人:" + order.getFrom()).breakLine()
+                    .text(String.format("寄件人手机:%s", address.getUserPhone())).breakLine()
+                    .text("收件人:" + order.getTo()).breakLine()
                     .text(String.format("收件人手机:%s", order.getToPhone())).breakLine()
                     .text("收件地址:" + order.getToWhere()).breakLine()
                     .text("预约时间:" + order.getBookPeriod()).breakLine()
