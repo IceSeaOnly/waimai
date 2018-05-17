@@ -45,7 +45,7 @@
             <div class="swiper-container" data-autoplay='2000' style="height:262px">
                 <div class="swiper-wrapper">
                     <div class="swiper-slide" th:each="img:${imgs}">
-                        <img th:src="${img.img}" style="width: 100%">
+                        <a th:href="${img.href}"><img th:src="${img.img}" style="width: 100%"></a>
                     </div>
                 </div>
             </div>

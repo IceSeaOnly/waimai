@@ -17,4 +17,5 @@ public class IndexImage extends BaseEntity {
     @GeneratedValue
     private Long id;
     private String img;
+    private String href;
 }
