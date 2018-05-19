@@ -97,20 +97,7 @@ public class AfterPay extends BaseController {
             User from = userService.findById(record.getFromId());
             record.setPaid(Boolean.TRUE);
             refereeRecordService.update(record);
-            CouponTicket ticket = new CouponTicket();
-            ticket.setCouponType(CouponTypeEnum.RANDOM.getCode());
-            ticket.setVal(0);
-            ticket.setRandomFrom(10);
-            ticket.setRandomTo(100);
-            ticket.setRemark("fork from " + ticket.getId());
-            ticket.setDiscountLimit(100);
-            ticket.setCouponType(CouponTypeEnum.MINUS_PRICE.getCode());
-            ticket.setId(9999999L);
-            ticket.setActivityStartTime(TimeTools.currentTS());
-            ticket.setActivityEndTime(TimeTools.currentTS()+(86400000*90));
-            ticket.setRemaining(1);
-            ticket.setUuid(UUID.randomUUID().toString());
-
+            CouponTicket ticket = generateTicketTpl(from);
             ticket = userCouponController.serverPushCoupon(ticket, from);
             wxService.tplMessage(iceConfig.getRechargeSuccess(), TplGenerator.getInstance()
                     .put("first", "恭喜您在邀请新人活动中获得一张全场通用优惠券!全场支付立减"+ticket.doubleVal()+"元!")
@@ -122,6 +109,26 @@ public class AfterPay extends BaseController {
                     .getAll(), from.getOpenId(), "");
         }
         return success();
+    }
+
+    private CouponTicket generateTicketTpl(User from) {
+        CouponTicket ticket = new CouponTicket();
+        ticket.setCouponType(CouponTypeEnum.RANDOM.getCode());
+        ticket.setVal(0);
+        ticket.setAppCode(PayBizEnum.ALL.getCode());
+        ticket.setRegionId(from.getRegionId());
+        ticket.setRegionName(from.getRegionName());
+        ticket.setRandomFrom(10);
+        ticket.setRandomTo(100);
+        ticket.setRemark("新人专用模板for user:" + from.getId());
+        ticket.setDiscountLimit(100);
+        ticket.setId(9999999L);
+        ticket.setActivityStartTime(TimeTools.currentTS());
+        ticket.setActivityEndTime(4070880000000L);
+        ticket.setRemaining(1);
+        ticket.setUuid(UUID.randomUUID().toString());
+
+        return ticket;
     }
 
     private void payFruitOrderSuccess(Manager manager, UnifiedOrder order) {

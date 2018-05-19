@@ -34,7 +34,7 @@ public class ActivityController extends BaseController {
     @RequestMapping("pullNewer")
     public String pullNewer(Long ref, ModelMap map) {
         User user = userService.findById(getUser().getId());
-        if (TimeTools.currentTS() - user.getCreated() < 60000 && user.getRefereeId() == null) {
+        if (TimeTools.currentTS() - user.getCreated() < 300000 && user.getRefereeId() == null) {
             RefereeRecord refereeRecord = new RefereeRecord();
             refereeRecord.setFromId(ref);
             refereeRecord.setUserId(user.getId());
