@@ -23,6 +23,14 @@ public class ActivityController extends BaseController {
     @Autowired
     private RefereeRecordService refereeRecordService;
 
+    /**
+     * 重定向到拉新页
+     */
+    @RequestMapping("toPullNewerPage")
+    public String toPullNewerPage() {
+        return "redirect:http://wmpay.binghai.site/newerActivity.php?from=" + getUser().getId();
+    }
+
     @RequestMapping("pullNewer")
     public String pullNewer(Long from, ModelMap map) {
         User user = userService.findById(getUser().getId());
@@ -40,7 +48,7 @@ public class ActivityController extends BaseController {
         } else {
             return commonResp("您已经是老用户啦!",
                     "您已经是老用户了，机会留给新人吧!现在邀请新人，最高可得88元!",
-                    "去邀请新人","http://wmpay.binghai.site/newerActivity.php",map);
+                    "去邀请新人", "http://wmpay.binghai.site/newerActivity.php", map);
         }
     }
 }
