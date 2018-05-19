@@ -48,7 +48,7 @@ public class ActivityController extends BaseController {
         } else {
             return commonResp("您已经是老用户啦!",
                     "您已经是老用户了，机会留给新人吧!现在邀请新人，最高可得88元!",
-                    "去邀请新人", "http://wmpay.binghai.site/newerActivity.php", map);
+                    "去邀请新人", "http://wmpay.binghai.site/newerActivity.php?from="+getUser().getId(), map);
         }
     }
 }
