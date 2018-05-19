@@ -32,15 +32,15 @@ public class ActivityController extends BaseController {
     }
 
     @RequestMapping("pullNewer")
-    public String pullNewer(Long from, ModelMap map) {
+    public String pullNewer(Long ref, ModelMap map) {
         User user = userService.findById(getUser().getId());
         if (TimeTools.currentTS() - user.getCreated() < 60000 && user.getRefereeId() == null) {
             RefereeRecord refereeRecord = new RefereeRecord();
-            refereeRecord.setFromId(from);
+            refereeRecord.setFromId(ref);
             refereeRecord.setUserId(user.getId());
             refereeRecord.setPaid(Boolean.FALSE);
             refereeRecordService.save(refereeRecord);
-            user.setRefereeId(from);
+            user.setRefereeId(ref);
             userService.update(user);
             getSession().setAttribute("user", user);
 
