@@ -5,7 +5,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import site.binghai.store.config.IceConfig;
+import site.binghai.store.controller.user.UserCouponController;
 import site.binghai.store.entity.*;
+import site.binghai.store.enums.CouponTypeEnum;
 import site.binghai.store.enums.OrderStatusEnum;
 import site.binghai.store.enums.PayBizEnum;
 import site.binghai.store.enums.TakeOutStatusEnum;
@@ -13,6 +15,8 @@ import site.binghai.store.service.*;
 import site.binghai.store.tools.MD5;
 import site.binghai.store.tools.TimeTools;
 import site.binghai.store.tools.TplGenerator;
+
+import java.util.UUID;
 
 /**
  * Created by IceSea on 2018/4/30.
@@ -35,6 +39,12 @@ public class AfterPay extends BaseController {
     private AddressService addressService;
     @Autowired
     private ExpressOrderService expressOrderService;
+    @Autowired
+    private RefereeRecordService refereeRecordService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private UserCouponController userCouponController;
 
     /**
      * orderKey = orderId
@@ -78,6 +88,39 @@ public class AfterPay extends BaseController {
                 break;
         }
 
+        /**
+         * 检查是否是新人消费，如果有推荐人就给推荐人返券
+         * */
+        Long userId = order.getUserId();
+        RefereeRecord record = refereeRecordService.findByUserId(userId);
+        if (record != null) {
+            User from = userService.findById(record.getFromId());
+            record.setPaid(Boolean.TRUE);
+            refereeRecordService.update(record);
+            CouponTicket ticket = new CouponTicket();
+            ticket.setCouponType(CouponTypeEnum.RANDOM.getCode());
+            ticket.setVal(0);
+            ticket.setRandomFrom(10);
+            ticket.setRandomTo(100);
+            ticket.setRemark("fork from " + ticket.getId());
+            ticket.setDiscountLimit(100);
+            ticket.setCouponType(CouponTypeEnum.MINUS_PRICE.getCode());
+            ticket.setId(9999999L);
+            ticket.setActivityStartTime(TimeTools.currentTS());
+            ticket.setActivityEndTime(TimeTools.currentTS()+(86400000*90));
+            ticket.setRemaining(1);
+            ticket.setUuid(UUID.randomUUID().toString());
+
+            ticket = userCouponController.serverPushCoupon(ticket, from);
+            wxService.tplMessage(iceConfig.getRechargeSuccess(), TplGenerator.getInstance()
+                    .put("first", "恭喜您在邀请新人活动中获得一张全场通用优惠券!全场支付立减"+ticket.doubleVal()+"元!")
+                    .put("keyword1","本账户")
+                    .put("keyword2",ticket.doubleVal()+"元")
+                    .put("keyword3","邀请新人赠送")
+                    .put("keyword3",TimeTools.now())
+                    .put("remark","优惠券已经发放到您的账户！邀请更多还可获得更多优惠券!")
+                    .getAll(), from.getOpenId(), "");
+        }
         return success();
     }
 

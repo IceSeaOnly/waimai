@@ -41,5 +41,9 @@ public class IceConfig {
     private String refuseRefund;
     //继续支付通知 OPENTM405885989
     private String require2Pay;
+    // 充值到账通知 OPENTM405723401
+    private String rechargeSuccess;
+    // 接单提醒 OPENTM205704706
+    private String orderAccept;
 
 }

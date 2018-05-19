@@ -84,7 +84,7 @@ public class ExpressController extends BaseController {
                               @RequestParam Long city,
                               ModelMap map
     ) {
-        if (city < 0 || !noEmptyString(Arrays.asList(to, toPhone, from, fromPhone, toWhere,personalId))) {
+        if (city < 0 || !noEmptyString(Arrays.asList(to, toPhone, from, fromPhone, toWhere, personalId))) {
             return commonResp("输入有误", "输入不正确，请确认输入完整", "好的", "/user/exIndex", map);
         }
 
@@ -117,6 +117,15 @@ public class ExpressController extends BaseController {
 
         managerService.findByRegionId(unifiedOrder.getRegionId())
                 .forEach(v -> commitSuccess(v, unifiedOrder));
+
+        wxService.tplMessage(iceConfig.getOrderAccept(), TplGenerator.getInstance()
+                        .put("first", "您的代取订单已经接单，请耐心等待客服联系您!")
+                        .put("keyword1", unifiedOrder.getCreated() + "")
+                        .put("keyword2", TimeTools.now())
+                        .put("remark", "感谢您的使用!")
+                        .getAll(),
+                getUser().getOpenId(),
+                iceConfig.getServer() + "/user/confirmExpressOrder?unifiedId=" + expressOrder.getUnifiedId());
 
         return "redirect:/user/confirmExpressOrder?unifiedId=" + expressOrder.getUnifiedId();
     }
@@ -151,6 +160,16 @@ public class ExpressController extends BaseController {
         expressOrder.setBookPeriod(bookPeriodService.findById(bookPeriod).getName());
 
         expressOrder = expressOrderService.save(expressOrder);
+
+        wxService.tplMessage(iceConfig.getOrderAccept(), TplGenerator.getInstance()
+                        .put("first", "您的代取订单已经接单，请耐心等待客服联系您!")
+                        .put("keyword1", unifiedOrder.getCreated() + "")
+                        .put("keyword2", TimeTools.now())
+                        .put("remark", "感谢您的使用!")
+                        .getAll(),
+                getUser().getOpenId(),
+                iceConfig.getServer() + "/user/confirmExpressOrder?unifiedId=" + expressOrder.getUnifiedId());
+
         return "redirect:/user/confirmExpressOrder?unifiedId=" + expressOrder.getUnifiedId();
     }
 
@@ -189,9 +208,9 @@ public class ExpressController extends BaseController {
 
     @RequestMapping("isOrderPriceConfirmed")
     @ResponseBody
-    public Object isOrderPriceConfirmed(@RequestParam Long orderId){
+    public Object isOrderPriceConfirmed(@RequestParam Long orderId) {
         ExpressOrder order = expressOrderService.findById(orderId);
-        if(order != null && order.getPriceConfirmed()){
+        if (order != null && order.getPriceConfirmed()) {
             return 1;
         }
         return 0;
@@ -213,7 +232,7 @@ public class ExpressController extends BaseController {
         map.put("title", type == 0 ? "寄快递" : "取快递");
         if (type == 0) {
             sb.append("寄件人: " + address.getUserName() + "</br>");
-            sb.append("寄件地址:"+address.getAddressHead()+address.getAddressDetail()+"<br/>");
+            sb.append("寄件地址:" + address.getAddressHead() + address.getAddressDetail() + "<br/>");
             sb.append(String.format("寄件人手机: <a href=\"tel:%s\">%s</a></br>", address.getUserPhone(), address.getUserPhone()));
             sb.append("收件人 :" + order.getTo() + "</br>");
             sb.append(String.format("收件人手机: <a href=\"tel:%s\">%s</a></br>", order.getToPhone(), order.getToPhone()));
@@ -235,7 +254,7 @@ public class ExpressController extends BaseController {
         map.put("order", order);
         map.put("detail", sb.toString());
         map.put("adminTag", false);
-        map.put("isOwner",true);
+        map.put("isOwner", true);
         return "confirmExpressOrder";
     }
 
@@ -260,7 +279,7 @@ public class ExpressController extends BaseController {
         UserAddress address = addressService.getUserAddress(order.getUserId());
         if (type == 0) {
             sb.append("寄件人:" + address.getUserName() + "</br>");
-            sb.append("寄件地址:"+address.getAddressHead()+address.getAddressDetail()+"<br/>");
+            sb.append("寄件地址:" + address.getAddressHead() + address.getAddressDetail() + "<br/>");
             sb.append(String.format("寄件人手机:<a href=\"tel:%s\">%s</a></br>", address.getUserPhone(), address.getUserPhone()));
             sb.append("收件人:" + order.getTo() + "</br>");
             sb.append(String.format("收件人手机:<a href=\"tel:%s\">%s</a></br>", order.getToPhone(), order.getToPhone()));
@@ -282,7 +301,7 @@ public class ExpressController extends BaseController {
         map.put("order", order);
         map.put("detail", sb.toString());
         map.put("adminTag", true);
-        map.put("isOwner",false);
+        map.put("isOwner", false);
         String printKey = UUID.randomUUID().toString();
         getSession().setAttribute("printKey", printKey);
         map.put("printKey", printKey);

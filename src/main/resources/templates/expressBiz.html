@@ -177,7 +177,7 @@
                         <p style="color: red" id="notice"></p>
 
                         <div class="content-block">
-                            <p><a onclick="$('#newDelivery1').submit()" class="button button-big">提交订单</a></p>
+                            <p><a onclick="submitForm('newDelivery1')" class="button button-big">提交订单</a></p>
                         </div>
                     </form>
                 </div>
@@ -248,7 +248,7 @@
                             </ul>
                         </div>
                         <div class="content-block">
-                            <p><a onclick="$('#newDelivery2').submit()" class="button button-big">提交订单</a></p>
+                            <p><a onclick="submitForm('newDelivery2')" class="button button-big">提交订单</a></p>
                         </div>
                     </form>
                 </div>
@@ -282,6 +282,11 @@
 </div>
 <script>
     $.init();
+
+    function submitForm(id) {
+        $('#'+id).submit()
+        $.alert("订单提交中...");
+    }
 
     function vChange(v){
         $("#cityMaps").show();

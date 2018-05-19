@@ -24,4 +24,6 @@ public class User extends BaseEntity {
     private Long regionId; // 对应Category一级目录
     private String regionName;
 
+    private Long refereeId; //推荐人id
+
 }

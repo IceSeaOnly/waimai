@@ -8,6 +8,7 @@ import site.binghai.store.entity.UnifiedOrder;
 import site.binghai.store.entity.User;
 import site.binghai.store.enums.CouponStatusEnum;
 import site.binghai.store.enums.OrderStatusEnum;
+import site.binghai.store.enums.PayBizEnum;
 import site.binghai.store.service.dao.UserCouponDao;
 import site.binghai.store.tools.TimeTools;
 
@@ -81,7 +82,7 @@ public class UserCouponService extends BaseService<Coupon> {
             throw new Exception("优惠券不可用!");
         }
 
-        if (!coupon.getAppCode().equals(order.getAppCode())) {
+        if (!coupon.getAppCode().equals(PayBizEnum.ALL.getCode()) && !coupon.getAppCode().equals(order.getAppCode())) {
             throw new Exception("使用场景不同!");
         }
 
