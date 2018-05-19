@@ -59,8 +59,8 @@ public class UserLoginController extends BaseController {
             return commonResp("欢迎!", "为了提供更好的服务，请先完善信息", "点我完善信息", "/user/memberInfo", map);
         }
 
-
         Object backUrl = getSession().getAttribute("backUrl");
+        if(backUrl != null) getSession().removeAttribute("backUrl");
         return backUrl == null ? "redirect:/user/index" : "redirect:" + backUrl;
     }
 }

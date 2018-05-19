@@ -103,6 +103,11 @@ public class IndexController extends BaseController {
 
         addressService.save(userAddress);
 
+        Object backUrl = getSession().getAttribute("backUrl");
+        if(backUrl != null){
+            getSession().removeAttribute("backUrl");
+            return "redirect:" + backUrl;
+        }
         return commonResp("更新成功", "", "好的", "/user/member", map);
     }
 }
