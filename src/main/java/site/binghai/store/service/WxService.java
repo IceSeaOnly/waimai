@@ -25,9 +25,9 @@ public class WxService extends BaseBean {
     private Long tokenOutOfTimeTs;
 
     public String getAccessToken() {
-        if (accessToken != null && TimeTools.currentTS() < tokenOutOfTimeTs) {
-            return accessToken;
-        }
+//        if (accessToken != null && TimeTools.currentTS() < tokenOutOfTimeTs) {
+//            return accessToken;
+//        }
 
         JSONObject res = HttpUtils.sendJSONGet(String.format(accUrl, iceConfig.getAppId(), iceConfig.getAppSecret()), null);
         if (res == null || res.get("errcode") != null) {
