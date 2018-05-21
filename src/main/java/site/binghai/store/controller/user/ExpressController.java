@@ -119,10 +119,10 @@ public class ExpressController extends BaseController {
                 .forEach(v -> commitSuccess(v, unifiedOrder));
 
         wxService.tplMessage(iceConfig.getOrderAccept(), TplGenerator.getInstance()
-                        .put("first", "您的代取订单已经接单，请耐心等待客服联系您!")
+                        .put("first", "您的寄件订单已经接单，请耐心等待客服联系您!")
                         .put("keyword1", unifiedOrder.getCreated() + "")
                         .put("keyword2", TimeTools.now())
-                        .put("remark", "感谢您的使用!")
+                        .put("remark", "您的寄件订单已经接单，请耐心等待客服联系，或者您也可以联系客服 18954289568 ，感谢您的使用！")
                         .getAll(),
                 getUser().getOpenId(),
                 iceConfig.getServer() + "/user/confirmExpressOrder?unifiedId=" + expressOrder.getUnifiedId());
@@ -165,7 +165,7 @@ public class ExpressController extends BaseController {
                         .put("first", "您的代取订单已经接单，请耐心等待客服联系您!")
                         .put("keyword1", unifiedOrder.getCreated() + "")
                         .put("keyword2", TimeTools.now())
-                        .put("remark", "感谢您的使用!")
+                        .put("remark", "您的代取订单已经接单，请耐心等待客服联系，或者您也可以联系客服 18954289568 ，感谢您的使用！")
                         .getAll(),
                 getUser().getOpenId(),
                 iceConfig.getServer() + "/user/confirmExpressOrder?unifiedId=" + expressOrder.getUnifiedId());
