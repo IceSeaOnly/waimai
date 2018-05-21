@@ -39,9 +39,11 @@ public class ExpressOrderTask extends BaseBean {
         logger.info("ExpressOrderTask start.");
         List<ExpressOrder> ls = expressOrderService.findByPayStateAndCanceled(Boolean.FALSE, Boolean.FALSE);
         ls.forEach(v -> {
-            if (!v.getPriceConfirmed() && TimeTools.currentTS() - v.getCreated() > 86400 * 100) {
+            if (!v.getPriceConfirmed() && TimeTools.currentTS() - v.getCreated() > 86400000) {
                 setOutOfDate(v);
-            } else if (TimeTools.currentTS() - v.getCreated() > 60000 * 30) {
+            }
+
+            if (v.getPriceConfirmed() && TimeTools.currentTS() - v.getCreated() > 60000 * 30) {
                 setOutOfDate(v);
             }
         });
