@@ -302,6 +302,7 @@ public class ExpressController extends BaseController {
         map.put("detail", sb.toString());
         map.put("adminTag", true);
         map.put("isOwner", false);
+        map.put("scanUrl",iceConfig.getPayServer()+"/scanBarCode.php?exId="+order.getId()+"&passCode="+order.getCreated());
         String printKey = UUID.randomUUID().toString();
         getSession().setAttribute("printKey", printKey);
         map.put("printKey", printKey);
