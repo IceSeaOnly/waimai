@@ -19,13 +19,15 @@ public class Api extends BaseController {
     private ExpressOrderService expressOrderService;
 
     @GetMapping("expressBarCode")
-    public Object expressBarCode(@RequestParam Long passCode, @RequestParam Long exId,@RequestParam String barCode) {
+    public Object expressBarCode(@RequestParam Long passCode, @RequestParam Long exId, @RequestParam String barCode, @RequestParam String callback) {
         ExpressOrder order = expressOrderService.findByUnifiedId(exId);
-        if(order != null && order.getCreated().equals(passCode)){
+        if (order != null && order.getCreated().equals(passCode)) {
             order.setExName("天天快递");
             order.setExNo(barCode);
             expressOrderService.update(order);
+        } else {
+            return jsoupFail("参数有误", callback);
         }
-        return success("录入成功，返回微信");
+        return jsoupSuccess(null, "录入成功，返回微信", callback);
     }
 }
