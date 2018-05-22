@@ -20,7 +20,7 @@ public class Api extends BaseController {
 
     @GetMapping("expressBarCode")
     public Object expressBarCode(@RequestParam Long passCode, @RequestParam Long exId, @RequestParam String barCode, @RequestParam String callback) {
-        ExpressOrder order = expressOrderService.findByUnifiedId(exId);
+        ExpressOrder order = expressOrderService.findById(exId);
         if (order != null && order.getCreated().equals(passCode)) {
             order.setExName("天天快递");
             order.setExNo(barCode);
