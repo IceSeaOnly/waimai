@@ -88,6 +88,10 @@ public class ExpressController extends BaseController {
             return commonResp("输入有误", "输入不正确，请确认输入完整", "好的", "/user/exIndex", map);
         }
 
+        if (fromPhone.length() != 11 || toPhone.length() != 11) {
+            return commonResp("输入有误", "手机号不正确，请输入正确的11位手机号" + fromPhone + "," + toPhone, "好的", "/user/exIndex", map);
+        }
+
         double fee = 999999;
         if (fee <= 0) {
             return commonResp("价格有误", "请输入正确的价格", "好的", "/user/exIndex", map);
@@ -176,8 +180,8 @@ public class ExpressController extends BaseController {
 
     private void commitSuccess(Manager manager, ExpressOrder order) {
         wxService.tplMessage(iceConfig.getNewOrderNoticeTpl(), TplGenerator.getInstance()
-                .put("first", "新" + (order.getType()==0?"寄件":"取件") + "订单到达!用户已下单，请联系用户确定费用，点击设定价格")
-                .put("keyword1", (order.getType()==0?"寄件":"取件"))
+                .put("first", "新" + (order.getType() == 0 ? "寄件" : "取件") + "订单到达!用户已下单，请联系用户确定费用，点击设定价格")
+                .put("keyword1", (order.getType() == 0 ? "寄件" : "取件"))
                 .put("keyword2", TimeTools.now())
                 .put("keyword3", "Id" + order.getUserId())
                 .put("keyword4", order.getFrom())

@@ -283,10 +283,6 @@
     $.init();
 
     function submitForm(id) {
-        if(id == 'newDelivery1' && $("#newDelivery1_from").val().length != 11){
-            $.alert('请输入正确的11位手机号!');
-            return;
-        }
         $.toast("订单提交中...");
         $('#'+id).submit()
     }
