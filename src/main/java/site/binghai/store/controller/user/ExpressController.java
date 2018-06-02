@@ -115,8 +115,9 @@ public class ExpressController extends BaseController {
 
         expressOrder = expressOrderService.save(expressOrder);
 
+        ExpressOrder finalExpressOrder = expressOrder;
         managerService.findByRegionId(unifiedOrder.getRegionId())
-                .forEach(v -> commitSuccess(v, unifiedOrder));
+                .forEach(v -> commitSuccess(v, finalExpressOrder));
 
         wxService.tplMessage(iceConfig.getOrderAccept(), TplGenerator.getInstance()
                         .put("first", "您的寄件订单已经接单，请耐心等待客服联系您!")
@@ -173,13 +174,13 @@ public class ExpressController extends BaseController {
         return "redirect:/user/confirmExpressOrder?unifiedId=" + expressOrder.getUnifiedId();
     }
 
-    private void commitSuccess(Manager manager, UnifiedOrder order) {
+    private void commitSuccess(Manager manager, ExpressOrder order) {
         wxService.tplMessage(iceConfig.getNewOrderNoticeTpl(), TplGenerator.getInstance()
-                .put("first", "新" + order.getTitle() + "订单到达!用户已下单，请联系用户确定费用，点击设定价格")
-                .put("keyword1", order.getTitle())
+                .put("first", "新" + (order.getType()==0?"寄件":"取件") + "订单到达!用户已下单，请联系用户确定费用，点击设定价格")
+                .put("keyword1", (order.getType()==0?"寄件":"取件"))
                 .put("keyword2", TimeTools.now())
                 .put("keyword3", "Id" + order.getUserId())
-                .put("keyword4", order.getUserName())
+                .put("keyword4", order.getFrom())
                 .put("keyword5", "待确认")
                 .put("remark", "点击设定价格")
                 .getAll(), manager.getOpenId(), iceConfig.getServer() + "/user/orderDetail?unifiedId=" + order.getId() + "&openid=" + manager.getOpenId());
@@ -231,7 +232,7 @@ public class ExpressController extends BaseController {
 
         map.put("title", type == 0 ? "寄快递" : "取快递");
         if (type == 0) {
-            sb.append("寄件人: " + address.getUserName() + "</br>");
+            sb.append("寄件人: " + order.getFrom() + "</br>");
             sb.append("寄件地址:" + address.getAddressHead() + address.getAddressDetail() + "<br/>");
             sb.append(String.format("寄件人手机: <a href=\"tel:%s\">%s</a></br>", address.getUserPhone(), address.getUserPhone()));
             sb.append("收件人 :" + order.getTo() + "</br>");
@@ -278,7 +279,7 @@ public class ExpressController extends BaseController {
         map.put("title", type == 0 ? "寄快递" : "取快递");
         UserAddress address = addressService.getUserAddress(order.getUserId());
         if (type == 0) {
-            sb.append("寄件人:" + address.getUserName() + "</br>");
+            sb.append("寄件人:" + order.getFrom() + "</br>");
             sb.append("寄件地址:" + address.getAddressHead() + address.getAddressDetail() + "<br/>");
             sb.append(String.format("寄件人手机:<a href=\"tel:%s\">%s</a></br>", address.getUserPhone(), address.getUserPhone()));
             sb.append("收件人:" + order.getTo() + "</br>");
