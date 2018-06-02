@@ -187,7 +187,7 @@ public class ExpressController extends BaseController {
                 .put("keyword4", order.getFrom())
                 .put("keyword5", "待确认")
                 .put("remark", "点击设定价格")
-                .getAll(), manager.getOpenId(), iceConfig.getServer() + "/user/orderDetail?unifiedId=" + order.getId() + "&openid=" + manager.getOpenId());
+                .getAll(), manager.getOpenId(), iceConfig.getServer() + "/user/orderDetail?unifiedId=" + order.getUnifiedId() + "&openid=" + manager.getOpenId());
     }
 
     @PostMapping("setPrice4ExpressOrder")
