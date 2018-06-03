@@ -98,10 +98,10 @@ public class ExpressController extends BaseController {
         }
 
         UnifiedOrder unifiedOrder = unifiedOrderService.newOrder(PayBizEnum.EXPRESS, getUser(), "寄快递", Double.valueOf(fee * 100).intValue());
-
+        unifiedOrder.setUserName(from);
         ExpressOrder expressOrder = new ExpressOrder();
         expressOrder.setPriceConfirmed(Boolean.FALSE);
-        expressOrder.setUserName(getUser().getUserName());
+        expressOrder.setUserName(from);
         expressOrder.setUserId(getUser().getId());
         expressOrder.setHasPay(false);
         expressOrder.setCanceled(false);

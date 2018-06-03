@@ -151,7 +151,7 @@ public class AfterPay extends BaseController {
                 .put("first", "新" + order.getTitle() + "订单到达!用户已支付，请尽快处理!")
                 .put("keyword1", order.getTitle())
                 .put("keyword2", TimeTools.now())
-                .put("keyword3", "Id" + order.getUserId())
+                .put("keyword3", "Id：" + order.getUserId())
                 .put("keyword4", order.getUserName())
                 .put("keyword5", "已支付")
                 .put("remark", "点击查看详情")
