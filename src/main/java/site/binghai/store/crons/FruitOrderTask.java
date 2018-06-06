@@ -42,7 +42,7 @@ public class FruitOrderTask extends BaseBean {
         List<FruitTakeOut> ls = fruitTakeOutService.findByState(TakeOutStatusEnum.WAITING_PAY);
         if (ls == null) return;
         for (FruitTakeOut l : ls) {
-            if (TimeTools.currentTS() - l.getCreated() > 30 * 60000) {
+            if (TimeTools.currentTS() - l.getCreated() > 86400000) {
                 l.setTakeOutStatus(TakeOutStatusEnum.ENDED.getCode());
                 fruitTakeOutService.update(l);
 

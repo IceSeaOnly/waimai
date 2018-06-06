@@ -43,7 +43,7 @@ public class ExpressOrderTask extends BaseBean {
                 setOutOfDate(v);
             }
 
-            if (v.getPriceConfirmed() && TimeTools.currentTS() - v.getCreated() > 60000 * 30) {
+            if (v.getPriceConfirmed() && TimeTools.currentTS() - v.getCreated() > 86400000) {
                 setOutOfDate(v);
             }
         });

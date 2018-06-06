@@ -88,8 +88,8 @@ public class ExpressController extends BaseController {
             return commonResp("输入有误", "输入不正确，请确认输入完整", "好的", "/user/exIndex", map);
         }
 
-        if (fromPhone.length() != 11 || toPhone.length() != 11) {
-            return commonResp("输入有误", "手机号不正确，请输入正确的11位手机号" + fromPhone + "," + toPhone, "好的", "/user/exIndex", map);
+        if (fromPhone.length() != 11) {
+            return commonResp("输入有误", "手机号不正确，请输入正确的11位手机号,不要带空格" + fromPhone, "好的", "/user/exIndex", map);
         }
 
         double fee = 999999;
