@@ -15,4 +15,5 @@ public interface ExpressDao extends JpaRepository<ExpressOrder,Long>{
     List<ExpressOrder> findAllByHasPayOrderByIdDesc(Boolean hasPay,Pageable pageable);
     List<ExpressOrder> findAllByUserIdOrderByIdDesc(Long userId);
     List<ExpressOrder> findByHasPay(Boolean pay);
+    List<ExpressOrder> findByExNoNotNullOrderByIdDesc();
 }

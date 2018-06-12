@@ -1,0 +1,51 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>快递订单列表</title>
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+    <link rel="shortcut icon" href="/favicon.ico">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="stylesheet" href="http://g.alicdn.com/msui/sm/0.6.2/css/sm.min.css">
+    <script type='text/javascript' src='http://g.alicdn.com/sj/lib/zepto/zepto.min.js' charset='utf-8'></script>
+    <script type='text/javascript' src='http://g.alicdn.com/msui/sm/0.6.2/js/sm.min.js' charset='utf-8'></script>
+</head>
+
+<body>
+<div class="page-group">
+    <!-- 你的html代码 -->
+    <div class="page">
+        <div class="content">
+            <div class="buttons-tab">
+                <a th:href="${'/user/adminExpressOrderList?validate='+validate+'&type=0'}"
+                   th:class="${'tab-link button '+ATab}">待定价</a>
+                <a th:href="${'/user/adminExpressOrderList?validate='+validate+'&type=1'}"
+                   th:class="${'tab-link button '+BTab}">待录入</a>
+                <a th:href="${'/user/adminExpressOrderList?validate='+validate+'&type=2'}"
+                   th:class="${'tab-link button '+CTab}">已完成</a>
+            </div>
+            <div class="tabs">
+                <div th:each="item:${list}">
+                    <a th:href="${'/user/orderDetail?unifiedId='+item.unifiedId+'&openid='+openid}">
+                        <div class="card">
+                            <div class="card-header" th:text="${item.from+'  '+item.createdTime}">姓名 下单时间</div>
+                            <div class="card-content">
+                                <div class="card-content-inner" th:text="${item.to +' '+item.toWhere}">
+                                    头和尾的卡片。卡头是用来显示一些额外的信息，或自定义操作卡标题和页脚。
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+</script>
+</body>
+
+</html>
