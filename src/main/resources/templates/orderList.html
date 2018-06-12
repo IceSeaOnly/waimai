@@ -20,17 +20,17 @@
         <div class="content">
             <div class="buttons-tab">
                 <a th:href="${'/user/adminExpressOrderList?validate='+validate+'&type=0'}"
-                   th:class="${'tab-link button '+ATab}">待定价</a>
+                   external><div th:class="${'tab-link button '+ATab}">待定价</div></a>
                 <a th:href="${'/user/adminExpressOrderList?validate='+validate+'&type=1'}"
-                   th:class="${'tab-link button '+BTab}">待录入</a>
+                   external><div th:class="${'tab-link button '+BTab}">待录入</div></a>
                 <a th:href="${'/user/adminExpressOrderList?validate='+validate+'&type=2'}"
-                   th:class="${'tab-link button '+CTab}">已完成</a>
+                   external><div th:class="${'tab-link button '+CTab}">已完成</div></a>
             </div>
             <div class="tabs">
                 <div th:each="item:${list}">
                     <a th:href="${'/user/orderDetail?unifiedId='+item.unifiedId+'&openid='+openid}">
                         <div class="card">
-                            <div class="card-header" th:text="${item.from+'  '+item.createdTime}">姓名 下单时间</div>
+                            <div class="card-header" th:text="${item.from+' '+item.createdTime}">姓名 下单时间</div>
                             <div class="card-content">
                                 <div class="card-content-inner" th:text="${item.to +' '+item.toWhere}">
                                     头和尾的卡片。卡头是用来显示一些额外的信息，或自定义操作卡标题和页脚。
