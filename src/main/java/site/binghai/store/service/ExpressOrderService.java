@@ -81,13 +81,7 @@ public class ExpressOrderService extends BaseService<ExpressOrder> implements Un
     }
 
     public List<ExpressOrder> findAllConfirmedButNotFilled() {
-        ExpressOrder order = new ExpressOrder();
-        order.setCanceled(Boolean.FALSE);
-        order.setPriceConfirmed(Boolean.TRUE);
-        order.setHasPay(Boolean.TRUE);
-        order.setExNo(null);
-
-        return query(order);
+        return expressDao.findByExNoNullAndHasPayOrderByIdDesc(Boolean.TRUE);
     }
 
     public List<ExpressOrder> findAllFilled() {

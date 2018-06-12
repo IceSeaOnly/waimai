@@ -20,11 +20,11 @@
         <div class="content">
             <div class="buttons-tab">
                 <a th:href="${'/user/adminExpressOrderList?validate='+validate+'&type=0'}"
-                   external><div th:class="${'tab-link button '+ATab}">待定价</div></a>
+                   ><div th:class="${'tab-link button '+ATab}">待定价</div></a>
                 <a th:href="${'/user/adminExpressOrderList?validate='+validate+'&type=1'}"
-                   external><div th:class="${'tab-link button '+BTab}">待录入</div></a>
+                   ><div th:class="${'tab-link button '+BTab}">待录入</div></a>
                 <a th:href="${'/user/adminExpressOrderList?validate='+validate+'&type=2'}"
-                   external><div th:class="${'tab-link button '+CTab}">已完成</div></a>
+                   ><div th:class="${'tab-link button '+CTab}">已完成</div></a>
             </div>
             <div class="tabs">
                 <div th:each="item:${list}">
