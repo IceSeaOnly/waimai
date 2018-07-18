@@ -2,6 +2,7 @@ package site.binghai.store.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import site.binghai.store.entity.UnifiedOrder;
 import site.binghai.store.entity.User;
 import site.binghai.store.service.dao.ExpressDao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -81,7 +83,8 @@ public class ExpressOrderService extends BaseService<ExpressOrder> implements Un
     }
 
     public List<ExpressOrder> findAllConfirmedButNotFilled() {
-        return expressDao.findByExNoNullAndHasPayOrderByIdDesc(Boolean.TRUE);
+        List<ExpressOrder> all = expressDao.findByExNoNullAndCanceledOrderByIdDesc(Boolean.FALSE);
+        return all;
     }
 
     public List<ExpressOrder> findAllFilled() {
